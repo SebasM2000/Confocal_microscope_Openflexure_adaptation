@@ -14,6 +14,7 @@ color_base = "#2d0b68"
 color_letra = "#a5f1f7"
 color_entrada = "#8a6ac2"
 color_frame = "#4d2db3"
+color_ventana2 = "#b2e1fa"
 
 def config_principal():
     # Título de ventana
@@ -40,23 +41,104 @@ config_principal()
 
 nombre = StringVar()
 apellido = StringVar()
-saludo = StringVar()
+correo = StringVar()
 
 visibilidadBoton = BooleanVar()
 visibilidadBoton.set(True)
 
-
+# Configuración segunda ventana
 def ingresar():
+    motorX = StringVar()
+    motorY = StringVar()
+    motorZ = StringVar()
+    varOpciones = ["Seleccione memoria", "Memoria 1", "Memoria 2"]
+    SeleccionMemoria = StringVar()
+    SeleccionMemoria.set(varOpciones[0])
+
     # Configuración segunda ventana
     interfazPrincipal = Toplevel()
     interfazPrincipal.title("Configuración microscopio")
     interfazPrincipal.geometry("750x500")
+    interfazPrincipal.resizable(0, 0)
+    interfazPrincipal.config(bg = color_ventana2, cursor = "dot")
+    root.withdraw()
+
+    # Etiquetas, botones y entradas
+    # Etiquetas
+    mensajeBienvenida = Label(interfazPrincipal, 
+                              text = "Bienvenido, " + entradaNombre.get() + " " + entradaApellido.get(),
+                              font = "TimesNewRoman 20 italic", bg = color_ventana2)
+    mensajeBienvenida.place(x = 150, y = 50)
 
 
+    # Etiquetas motores
+    infoPosMotores = Label(interfazPrincipal, text = "Posición motores:", bg = color_ventana2,
+                           font = "TimesnewRoman 12")
+    infoPosMotores.place(x = 140, y = 200)
+
+
+    infoPosMotor_X = Label(interfazPrincipal, text = "X", bg = color_ventana2,
+                           font = "TimesnewRoman 12")
+    infoPosMotor_X.place(x = 285, y = 180)
+
+
+    infoPosMotor_Y = Label(interfazPrincipal, text = "Y", bg = color_ventana2,
+                           font = "TimesnewRoman 12")
+    infoPosMotor_Y.place(x = 355, y = 180)
+
+
+    infoPosMotor_Z = Label(interfazPrincipal, text = "Z", bg = color_ventana2,
+                           font = "TimesnewRoman 12")
+    infoPosMotor_Z.place(x = 425, y = 180)
+    
+
+    # Entradas
+    entradaMotor_X = Entry(interfazPrincipal, bd = 2, textvariable = motorX, width = 5)
+    entradaMotor_X.insert(0, "0")
+    entradaMotor_X.place(x = 270, y = 200)
+    
+
+    entradaMotor_Y = Entry(interfazPrincipal, textvariable = motorY, bd = 2, width = 5)
+    entradaMotor_Y.insert(0, "0")
+    entradaMotor_Y.place(x = 340, y = 200)
+    
+
+    entradaMotor_Z = Entry(interfazPrincipal, textvariable = motorZ, bd = 2, width = 5)
+    entradaMotor_Z.insert(0, "0")
+    entradaMotor_Z.place(x = 410, y = 200)
+    
+
+    # Botones
+    botonSalir2 = Button(interfazPrincipal, text = "Salir", 
+                    command = root.destroy, bg = "red")
+    botonSalir2.place(x = 335, y = 400)
+
+
+    botonPosOrigen = Button(interfazPrincipal, text = "Mover motores al origen", bg = "#e1e7eb")
+    botonPosOrigen.place(x = 270, y = 240)
+
+    # Menu desplegable para opciones de almacenamiento de imágenes
+    infoAlmacenamiento = Label(interfazPrincipal, text = "Almacenamiento \n USB", bg = color_ventana2,
+                               font = "TimesNewRoman 12")
+    infoAlmacenamiento.place(x = 140, y = 295)
+    
+
+    infoAlmacenamiento2 = Label(interfazPrincipal, text = ":", bg = color_ventana2,
+                               font = "TimesNewRoman 15")
+    infoAlmacenamiento2.place(x = 252, y = 300)
+
+
+    menuOpciones = OptionMenu(interfazPrincipal, SeleccionMemoria, *varOpciones)
+    menuOpciones.config(width = 18)
+    menuOpciones.place(x = 270, y = 300)
+
+
+# Función que elimina el texto de las entradas nombre y apellido
 def borrar_texto(entrada):
     return lambda evento: entrada.delete(0, END)
 
 
+# Función que traslada a una nueva pantalla al hacer click en "Usuario frecuente"
 def usuarioFrecuente():
     if visibilidadBoton.get():
         botonUsuarioFrecuente.place_forget()
@@ -69,7 +151,8 @@ def usuarioFrecuente():
         infoNombre.place_forget()
         infoApellido.place_forget()
         infoCorreo.place_forget()
-        botonAtras.place(x = 100, y = 400)
+        botonAtras.place(x = 140, y = 400)
+        infoNoUF.place(x = 190, y = 180)
         visibilidadBoton.set(False)
     else:
         tituloBienvenida.place(x = 100, y = 50)
@@ -83,40 +166,49 @@ def usuarioFrecuente():
         infoApellido.place(x = 220, y = 240)
         infoCorreo.place(x = 220, y = 280)
         botonAtras.place_forget()
+        infoNoUF.place_forget()
         visibilidadBoton.set(True)
 
 #-----------------------------------------------------
 #               Etiquetas y entradas                 |
 #-----------------------------------------------------
+# Titulo
 tituloBienvenida = Label(root, text = "¡Bienvenido al laboratorio de Acusto-óptica\n y Radiometría!", 
                  bd = 14, bg = color_base, 
                  fg = color_letra, font = "TimesNewRoman 23 italic")
 tituloBienvenida.place(x = 100, y = 50)
 
+
 # Nombres, apellidos y correo
+
+# Nombre
 infoNombre = Label(root, text = "Nombre(s): ", bg = color_base,
                   font = "TimesNewRoman 13", fg = color_letra)
 infoNombre.place(x = 220, y = 200)
 
-entradaNombre = Entry(root, bd = 1, bg = color_entrada)
-entradaNombre.insert(0, "Escriba aquí su nombre")
+entradaNombre = Entry(root, bd = 1, bg = color_entrada, width = 30, textvariable = nombre)
+entradaNombre.insert(0, "Investigador")
 entradaNombre.bind("<Button-1>", borrar_texto(entradaNombre))
 entradaNombre.place(x = 315, y = 202)
 
+
+# Apellido
 infoApellido = Label(root, text = "Apellido(s):", bg = color_base,
                   font = "TimesNewRoman 13", fg = color_letra)
 infoApellido.place(x = 220, y = 240)
 
-entradaApellido = Entry(root, bd = 1, bg = color_entrada)
-entradaApellido.insert(0, "Escriba aquí su apellido")
+entradaApellido = Entry(root, bd = 1, bg = color_entrada, width = 30, textvariable = apellido)
+entradaApellido.insert(0, "Anónimo")
 entradaApellido.bind("<Button-1>", borrar_texto(entradaApellido))
 entradaApellido.place(x = 315, y = 242)
 
+
+# Correo
 infoCorreo = Label(root, text = "Correo:", bg = color_base,
                    font = "TimesNewRoman 13", fg = color_letra)
 infoCorreo.place(x = 220, y = 280)
 
-entradaCorreo = Entry(root, bd = 1, bg = color_entrada)
+entradaCorreo = Entry(root, bd = 1, bg = color_entrada, width = 30, textvariable = correo)
 entradaCorreo.insert(0, "Escriba aquí su correo")
 entradaCorreo.bind("<Button-1>", borrar_texto(entradaCorreo))
 entradaCorreo.place(x = 315, y = 282)
@@ -126,16 +218,22 @@ botonSalir = Button(root, text = "Salir",
                     command = root.destroy, bg = "red")
 botonSalir.place(x = 600, y = 400)
 
+
 botonUsuarioFrecuente = Button(root, text = "Usuario frecuente", 
                                bg = "#3a85f7", state = "normal",
                                command = usuarioFrecuente)
 botonUsuarioFrecuente.place(x = 100, y = 400)
 
+
 botonIngresar = Button(root, text = "Ingresar", bg = "#48c128",
                        command = ingresar)
-botonIngresar.place(x = 350, y = 330)
+botonIngresar.place(x = 390, y = 330)
+
 
 botonAtras = Button(root, text = "Atrás", command = usuarioFrecuente, bg = "#3a85f7")
 
+
+infoNoUF = Label(root, text = "Actualmente no hay ningún\n usuario frecuente", bd = 14, bg = color_base, 
+                 fg = color_letra, font = "TimesNewRoman 23")
 
 root.mainloop()
