@@ -6,59 +6,94 @@ Created on Sat Jun  3 14:17:52 2023
 """
 
 from tkinter import *
+import os
 
+# Variables globales
 root = Tk()
+color_base = "#2d0b68"
+color_letra = "#a5f1f7"
+color_entrada = "#8a6ac2"
+color_frame = "#4d2db3"
 
-# Título de ventana
-root.title("Mi primera ventana") 
+def config_principal():
+    # Título de ventana
+    root.title("Reconocimiento de usuario") 
 
-# Dimensiones de ventana
-root.geometry("900x500")
+    # Dimensiones de ventana
+    root.geometry("750x500")
 
-# Poniendo ícono de la ventana
-root.iconbitmap("D:/SEBASTIAN/UNIVERSIDAD/TRABAJO_GRADO_FINAL/Interfaz/TM.ico")
+    # Poniendo ícono de la ventana
+    ruta_abs_img = os.path.dirname(os.path.abspath(__file__))
+    img_ico = os.path.join(ruta_abs_img, "taylorm.png")
+    img = PhotoImage(file = img_ico)
+    root.iconphoto(True, img)
 
-# Limitando las dimensiones de ventana
-root.resizable(0, 0)
+    # Limitando las dimensiones de ventana
+    root.resizable(0, 0)
 
-# Configuraciones color y forma del cursor
-root.config(bg = "#898f8e", cursor = "dot")
+    # Configuraciones color y forma del cursor
+    root.config(bg = color_base, cursor = "dot")
+
+
+config_principal()
 
 nombre = StringVar()
 apellido = StringVar()
 saludo = StringVar()
 
-def saludar():
-    saludo.set("Hola " + nombre.get() + " " + apellido.get())
+def ingresar():
+    # Cpnfiguración segunda ventana
+    interfazPrincipal = Toplevel()
+    interfazPrincipal.title("Configuración microscopio")
+    interfazPrincipal.geometry("750x500")
+
+
+def borrar_texto(entrada):
+    return lambda evento: entrada.delete(0, END)
 
 nombre.set("Escribe aquí tu nombre")
 apellido.set("Escribe aquí tu apellido")
 
-# Etiquetas
-etiqueta = Label(root, text = "Etiqueta", bd = 14, bg = "green", font = "Curier 10")
-etiqueta.grid(row = 0, column = 0)
+#-----------------------------------------------------
+#               Etiquetas y entradas                 |
+#-----------------------------------------------------
+tituloBienvenida = Label(root, text = "¡Bienvenido al laboratorio de Acusto-óptica\n y Radiometría!", 
+                 bd = 14, bg = color_base, 
+                 fg = color_letra, font = "TimesNewRoman 23 italic").place(x = 100, y = 50)
 
-etiqueta2 = Label(root, text = "Escribe aquí tu nombre")
-etiqueta2.place(x = 100, y = 2)
-entrada1 = Entry(root, textvariable = nombre, bd = 5)
-entrada1.place(x = 100, y = 20)
+# Nombres, apellidos y correo
+infoNombre = Label(root, text = "Nombre(s): ", bg = color_base,
+                  font = "TimesNewRoman 13", fg = color_letra).place(x = 220, y = 200)
 
-etiqueta3 = Label(root, text = "Escribe aquí tu apellido")
-etiqueta3.place(x = 200, y = 2)
-entrada2 = Entry(root, textvariable = apellido, bd = 5)
-entrada2.place(x = 200, y = 20)
+entradaNombre = Entry(root, bd = 1, bg = color_entrada)
+entradaNombre.insert(0, "Escriba aquí su nombre")
+entradaNombre.bind("<Button-1>", borrar_texto(entradaNombre))
+entradaNombre.place(x = 315, y = 202)
 
-entrada3 = Entry(root, textvariable = saludo, state = "disable")
-entrada3.place(x = 200, y = 200)
+infoApellido = Label(root, text = "Apellido(s):", bg = color_base,
+                  font = "TimesNewRoman 13", fg = color_letra).place(x = 220, y = 240)
+
+entradaApellido = Entry(root, bd = 1, bg = color_entrada)
+entradaApellido.insert(0, "Escriba aquí su apellido")
+entradaApellido.bind("<Button-1>", borrar_texto(entradaApellido))
+entradaApellido.place(x = 315, y = 242)
+
+infoCorreo = Label(root, text = "Correo:", bg = color_base,
+                   font = "TimesNewRoman 13", fg = color_letra).place(x = 220, y = 280)
+
+entradaCorreo = Entry(root, bd = 1, bg = color_entrada)
+entradaCorreo.insert(0, "Escriba aquí su correo")
+entradaCorreo.bind("<Button-1>", borrar_texto(entradaCorreo))
+entradaCorreo.place(x = 315, y = 282)
 
 # Botones
-boton1 = Button(root, text = "Cerrar", command = root.destroy, bg = "red")
-boton1.grid(row = 2, column = 1)
+botonSalir = Button(root, text = "Salir", 
+                    command = root.destroy, bg = "red").place(x = 600, y = 400)
 
+botonUsuarioFrecuente = Button(root, text = "Usuario frecuente", 
+                               bg = "#3a85f7").place(x = 100, y = 400)
 
-boton2 = Button(root, text = "Saludar", command = saludar, bg = "blue")
-boton2.place(x = 150, y = 100)
-
-
+botonIngresar = Button(root, text = "Ingresar", bg = "#48c128",
+                       command = ingresar).place(x = 350, y = 330)
 
 root.mainloop()
