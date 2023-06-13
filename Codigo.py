@@ -25,7 +25,7 @@ def config_principal():
 
     # Poniendo ícono de la ventana
     ruta_abs_img = os.path.dirname(os.path.abspath(__file__))
-    img_ico = os.path.join(ruta_abs_img, "taylorm.png")
+    img_ico = os.path.join(ruta_abs_img, "Interfaz/taylorm.png")
     img = PhotoImage(file = img_ico)
     root.iconphoto(True, img)
 

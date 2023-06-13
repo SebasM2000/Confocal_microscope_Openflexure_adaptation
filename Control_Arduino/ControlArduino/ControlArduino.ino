@@ -10,7 +10,7 @@
 
 
 // Pasos para dar una revolución completa
-int pasosRev = 2048; // Esto, para el motor 28BYJ-48
+int pasosRev = -2048; // Esto, para el motor 28BYJ-48
 int vel = 10; // Revoluciones/min
 int retraso = 500; // ms
 
@@ -24,7 +24,7 @@ void setup() {
 
 void loop() {
   motor.step(pasosRev);
-  delay(retraso);
-  motor.step(-pasosRev);
-  delay(retraso);
+//  delay(retraso);
+//  motor.step(-pasosRev);
+//  delay(retraso);
 }
