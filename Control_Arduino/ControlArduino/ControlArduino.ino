@@ -10,21 +10,34 @@
 
 
 // Pasos para dar una revolución completa
-int pasosRev = -2048; // Esto, para el motor 28BYJ-48
-int vel = 10; // Revoluciones/min
-int retraso = 500; // ms
+const int stepsPerRevolution = 2048;
+const int motorPin1 = 6;
+const int motorPin2 = 7;
+const int motorPin3 = 8;
+const int motorPin4 = 9;
 
-Stepper motor(pasosRev, 2, 3, 4, 5); // Nombrar motor y pines de control
+int vel = 5; // Revoluciones/min
+unsigned long retraso = 2000; // ms
+int direction = 1; // 1 sentido horario, -1 sentido antihorario
+
+Stepper motor(stepsPerRevolution, motorPin1, motorPin2, motorPin3, motorPin4); // Nombrar motor y pines de control
 
 
 void setup() {
   motor.setSpeed(vel);
-  
 }
 
 void loop() {
-  motor.step(pasosRev);
-//  delay(retraso);
-//  motor.step(-pasosRev);
-//  delay(retraso);
+  // Girar en el sentido actual
+  for (int i = 0; i < stepsPerRevolution; i++) {
+    motor.step(1);
+    delayMicroseconds(1000);
+  }
+
+  // Esperar el tiempo de retraso
+  delay(retraso);
+
+  // Cambiar de sentido
+  direction *= -1;
+  motor.setSpeed(5 * abs(direction));
 }
