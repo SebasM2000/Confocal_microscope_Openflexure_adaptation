@@ -5,39 +5,33 @@
  *  para trasladarlo posteriormente a Python.
 ***/
 
-// Librería motor paso a paso
-#include <Stepper.h>
+int retardo = 5; // Tiempo de retardo en milisegundos
+int valor_grados; // Valor ingresado en grados
+int num_pasos = 0; // Valor en grados donde se encuentra el motor
+String texto; // Text ingresado en la interfaz
 
-
-// Pasos para dar una revolución completa
-const int stepsPerRevolution = 2048;
-const int motorPin1 = 6;
-const int motorPin2 = 7;
-const int motorPin3 = 8;
-const int motorPin4 = 9;
-
-int vel = 5; // Revoluciones/min
-unsigned long retraso = 2000; // ms
-int direction = 1; // 1 sentido horario, -1 sentido antihorario
-
-Stepper motor(stepsPerRevolution, motorPin1, motorPin2, motorPin3, motorPin4); // Nombrar motor y pines de control
-
-
-void setup() {
-  motor.setSpeed(vel);
+void setup(){
+Serial.begin(9600); // Establecer velocidad de transmision de datos a 9600 baudios
+pinMode(2, OUTPUT);
+pinMode(3, OUTPUT);
+pinMode(4, OUTPUT);
+pinMode(5, OUTPUT);
 }
 
-void loop() {
-  // Girar en el sentido actual
-  for (int i = 0; i < stepsPerRevolution; i++) {
-    motor.step(1);
-    delayMicroseconds(1000);
-  }
+void loop(){
+   while(Serial.available()){ // Lee el valor enviado por el puerto serial
+     delay(retardo);
+     char c = Serial.read(); // Lee los caracteres
+     texto += c; // Convierte caracteres a cadena de caracteres
+   }
 
-  // Esperar el tiempo de retraso
-  delay(retraso);
+   if(texto.length() > 0){
+    valor_grados = texto.toInt(); // Convierte cadena de caracteres a enteros
+    Serial.print(valor_grados);
+    Serial.println(" grados");
+    delay(retardo);
+    valor_grados = valor_grados * 1.4222222222; // Ajuste de 512 vueltas a los 360 grados
+    }
 
-  // Cambiar de sentido
-  direction *= -1;
-  motor.setSpeed(5 * abs(direction));
+    
 }
