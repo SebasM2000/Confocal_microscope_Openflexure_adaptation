@@ -4,9 +4,15 @@ Created on Sat Jun  3 14:17:52 2023
 
 @author: s
 """
-
+# Librerías
+import serial
+import time
 from tkinter import *
 import os
+
+# Configuración arduino
+arduino =  serial.Serial("No shé", baudrate = 9600, timeoout = 1)
+time.sleep(2)
 
 # Variables globales
 root = Tk()
@@ -35,7 +41,7 @@ def config_principal():
     # Configuraciones color y forma del cursor
     root.config(bg = color_base, cursor = "dot")
 
-
+# Ejecución del código principal
 config_principal()
 
 
@@ -46,7 +52,7 @@ correo = StringVar()
 visibilidadBoton = BooleanVar()
 visibilidadBoton.set(True)
 
-# Configuración segunda ventana
+# Segunda ventana
 def ingresar():
     motorX = StringVar()
     motorY = StringVar()
@@ -96,6 +102,7 @@ def ingresar():
     entradaMotor_X = Entry(interfazPrincipal, bd = 2, textvariable = motorX, width = 5)
     entradaMotor_X.insert(0, "0")
     entradaMotor_X.place(x = 270, y = 200)
+    entradaMotor_X.bind('<Return>', mov_X)
     
 
     entradaMotor_Y = Entry(interfazPrincipal, textvariable = motorY, bd = 2, width = 5)
@@ -131,6 +138,26 @@ def ingresar():
     menuOpciones = OptionMenu(interfazPrincipal, SeleccionMemoria, *varOpciones)
     menuOpciones.config(width = 18)
     menuOpciones.place(x = 270, y = 300)
+
+    #### Funciones de los motores
+    # Motor en X
+    def mov_X(event):
+        x = entradaMotor_X.get()
+        
+        # Advertencia por si el valor ingresado no es entero
+        try:
+            int(x)
+        except:
+            mensajeAdvertencia = Label(interfazPrincipal, text = "Ingresar un dato numérico",
+                                       font = "TimesNewRoman 20 italic", 
+                                       bg = color_ventana2)
+            mensajeAdvertencia.place(x = 150, y = 50)
+        else:
+            # Ejecuta los pasos en el archivo .ino
+            for i in range(0, x):
+                arduino.write(b'1')
+                print(i)
+                time.sleep(0.1)
 
 
 # Función que elimina el texto de las entradas nombre y apellido

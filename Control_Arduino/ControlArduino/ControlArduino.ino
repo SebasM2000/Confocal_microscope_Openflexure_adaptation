@@ -7,7 +7,7 @@
 
 int retardo = 5; // Tiempo de retardo en milisegundos
 int valor_grados; // Valor ingresado en grados
-int num_pasos = 0; // Valor en grados donde se encuentra el motor
+int pos_origen = 0; // Valor en grados donde se encuentra el motor
 String texto; // Text ingresado en la interfaz
 
 void setup(){
@@ -35,29 +35,25 @@ pinMode(13, OUTPUT);
 void loop(){
    while(Serial.available()){ // Lee el valor enviado por el puerto serial
      delay(retardo);
-     char c = Serial.read(); // Lee los caracteres
-     texto += c; // Convierte caracteres a cadena de caracteres
+     int c = Serial.read(); // Lee el valor
    }
 
-   if(texto.length() > 0){
-    valor_grados = texto.toInt(); // Convierte cadena de caracteres a enteros
-    Serial.print(valor_grados);
+    Serial.print(c);
     Serial.println(" grados");
     delay(retardo);
-    valor_grados = valor_grados * 1.4222222222; // Ajuste de 512 vueltas a los 360 grados
-    }
+    c = c * 1.4222222222; // Ajuste de 512 vueltas a los 360 grados
+    
 
-   while(valor_grados > num_pasos){ // Gira hacia la izquierda
+   while(c > pos_origen){ // Gira hacia la izquierda
     paso_izq();
-    num_pasos += 1;
+    pos_origen += 1;
    }
 
-   while(valor_grados < num_pasos){ // Gira hacia la derecha
+   while(c < pos_origen){ // Gira hacia la derecha
     paso_der();
-    num_pasos -= 1;
+    pos_origen -= 1;
    }
 
-   texto = ""; // Cadena de texto inicial
    apagado(); // Evita que los motores se calienten
 }
 

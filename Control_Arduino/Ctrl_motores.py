@@ -1,7 +1,2 @@
-# Librerías
-import serial
-import time
-
-# Configuración arduino
-arduino =  serial.Serial("No shé", baudrate = 9600, timeoout = 1)
-time.sleep(2)
+x = 12
+print(x.length())
