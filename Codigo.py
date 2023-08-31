@@ -2,7 +2,7 @@
 """
 Created on Sat Jun  3 14:17:52 2023
 
-@author: s
+@author: Sebastián Marín Ruiz
 """
 # Librerías
 import serial
@@ -22,6 +22,9 @@ color_entrada = "#8a6ac2"
 color_frame = "#4d2db3"
 color_ventana2 = "#b2e1fa"
 
+#---------------------------------------#
+#--  Configuración ventana principal  --#
+#---------------------------------------#
 def config_principal():
     # Título de ventana
     root.title("Reconocimiento de usuario") 
@@ -98,21 +101,23 @@ def ingresar():
     infoPosMotor_Z.place(x = 425, y = 180)
     
 
-    # Entradas
+    # Entradas motores
     entradaMotor_X = Entry(interfazPrincipal, bd = 2, textvariable = motorX, width = 5)
     entradaMotor_X.insert(0, "0")
     entradaMotor_X.place(x = 270, y = 200)
-    entradaMotor_X.bind('<Return>', mov_X)
+    entradaMotor_X.bind("<Return>", mov_X)
     
 
     entradaMotor_Y = Entry(interfazPrincipal, textvariable = motorY, bd = 2, width = 5)
     entradaMotor_Y.insert(0, "0")
     entradaMotor_Y.place(x = 340, y = 200)
+    entradaMotor_Y.bind("<Return>", mov_Y)
     
 
     entradaMotor_Z = Entry(interfazPrincipal, textvariable = motorZ, bd = 2, width = 5)
     entradaMotor_Z.insert(0, "0")
     entradaMotor_Z.place(x = 410, y = 200)
+    entradaMotor_Z.bind("<Return>", mov_Z)
     
 
     # Botones
@@ -121,7 +126,8 @@ def ingresar():
     botonSalir2.place(x = 335, y = 400)
 
 
-    botonPosOrigen = Button(interfazPrincipal, text = "Mover motores al origen", bg = "#e1e7eb")
+    botonPosOrigen = Button(interfazPrincipal, text = "Mover motores al origen", bg = "#e1e7eb",
+                            command = reinicioPosiciones)
     botonPosOrigen.place(x = 270, y = 240)
 
     # Menu desplegable para opciones de almacenamiento de imágenes
@@ -154,10 +160,55 @@ def ingresar():
             mensajeAdvertencia.place(x = 150, y = 50)
         else:
             # Ejecuta los pasos en el archivo .ino
-            for i in range(0, x):
+            for i in range(0, x + 1):
                 arduino.write(b'1')
-                print(i)
                 time.sleep(0.1)
+    
+    # Motor en Y
+    def mov_Y(event):
+        y = entradaMotor_Y.get()
+        
+        # Advertencia por si el valor ingresado no es entero
+        try:
+            int(y)
+        except:
+            mensajeAdvertencia = Label(interfazPrincipal, text = "Ingresar un dato numérico",
+                                       font = "TimesNewRoman 20 italic", 
+                                       bg = color_ventana2)
+            mensajeAdvertencia.place(x = 150, y = 50)
+        else:
+            # Ejecuta los pasos en el archivo .ino
+            for i in range(0, y + 1):
+                arduino.write(b'2')
+                time.sleep(0.1)
+    
+    # Motor en Z
+    def mov_Z(event):
+        z = entradaMotor_Z.get()
+        
+        # Advertencia por si el valor ingresado no es entero
+        try:
+            int(z)
+        except:
+            mensajeAdvertencia = Label(interfazPrincipal, text = "Ingresar un dato numérico",
+                                       font = "TimesNewRoman 20 italic", 
+                                       bg = color_ventana2)
+            mensajeAdvertencia.place(x = 150, y = 50)
+        else:
+            # Ejecuta los pasos en el archivo .ino
+            for i in range(0, z + 1):
+                arduino.write(b'3')
+                time.sleep(0.1)
+    
+    def reinicioPosiciones():
+        entradaMotor_X.delete(0, END)
+        entradaMotor_X.insert(0, "0")
+
+        entradaMotor_Y.delete(0, END)
+        entradaMotor_Y.insert(0, "0")
+
+        entradaMotor_Z.delete(0, END)
+        entradaMotor_Z.insert(0, "0")
 
 
 # Función que elimina el texto de las entradas nombre y apellido
