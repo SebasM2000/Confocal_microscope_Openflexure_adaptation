@@ -11,7 +11,7 @@ from tkinter import *
 import os
 
 # Configuración arduino
-arduino =  serial.Serial("No shé", baudrate = 9600, timeoout = 1)
+arduino =  serial.Serial("/dev/ttyACM0", baudrate = 9600, timeout = 1)
 time.sleep(2)
 
 # Variables globales
@@ -79,6 +79,72 @@ def ingresar():
                               font = "TimesNewRoman 20 italic", bg = color_ventana2)
     mensajeBienvenida.place(x = 150, y = 50)
 
+    #### Funciones de los motores
+    # Motor en X
+    def mov_X(event):
+        x = entradaMotor_X.get()
+        
+        # Advertencia por si el valor ingresado no es entero
+        try:
+            x = int(x)
+        except:
+            mensajeAdvertencia = Label(interfazPrincipal, text = "Ingresar un dato numérico",
+                                       font = "TimesNewRoman 20 italic", 
+                                       bg = color_ventana2)
+            mensajeAdvertencia.place(x = 150, y = 50)
+        else:
+            # Ejecuta los pasos en el archivo .ino
+            # x = int(x)
+            for i in range(0, x):
+                arduino.write(b'1')
+                time.sleep(0.1)
+    
+    # Motor en Y
+    def mov_Y(event):
+        y = entradaMotor_Y.get()
+        
+        # Advertencia por si el valor ingresado no es entero
+        try:
+            y = int(y)
+        except:
+            mensajeAdvertencia = Label(interfazPrincipal, text = "Ingresar un dato numérico",
+                                       font = "TimesNewRoman 20 italic", 
+                                       bg = color_ventana2)
+            mensajeAdvertencia.place(x = 150, y = 50)
+        else:
+            # Ejecuta los pasos en el archivo .ino
+            for i in range(0, y):
+                arduino.write(b'2')
+                time.sleep(0.1)
+    
+    # Motor en Z
+    def mov_Z(event):
+        z = entradaMotor_Z.get()
+        
+        # Advertencia por si el valor ingresado no es entero
+        try:
+            z = int(z)
+        except:
+            mensajeAdvertencia = Label(interfazPrincipal, text = "Ingresar un dato numérico",
+                                       font = "TimesNewRoman 20 italic", 
+                                       bg = color_ventana2)
+            mensajeAdvertencia.place(x = 150, y = 50)
+        else:
+            # Ejecuta los pasos en el archivo .ino
+            for i in range(0, z):
+                arduino.write(b'3')
+                time.sleep(0.1)
+    
+    def reinicioPosiciones():
+        entradaMotor_X.delete(0, END)
+        entradaMotor_X.insert(0, "0")
+
+        entradaMotor_Y.delete(0, END)
+        entradaMotor_Y.insert(0, "0")
+
+        entradaMotor_Z.delete(0, END)
+        entradaMotor_Z.insert(0, "0")
+
 
     # Etiquetas motores
     infoPosMotores = Label(interfazPrincipal, text = "Posición motores:", bg = color_ventana2,
@@ -145,70 +211,7 @@ def ingresar():
     menuOpciones.config(width = 18)
     menuOpciones.place(x = 270, y = 300)
 
-    #### Funciones de los motores
-    # Motor en X
-    def mov_X(event):
-        x = entradaMotor_X.get()
-        
-        # Advertencia por si el valor ingresado no es entero
-        try:
-            int(x)
-        except:
-            mensajeAdvertencia = Label(interfazPrincipal, text = "Ingresar un dato numérico",
-                                       font = "TimesNewRoman 20 italic", 
-                                       bg = color_ventana2)
-            mensajeAdvertencia.place(x = 150, y = 50)
-        else:
-            # Ejecuta los pasos en el archivo .ino
-            for i in range(0, x + 1):
-                arduino.write(b'1')
-                time.sleep(0.1)
     
-    # Motor en Y
-    def mov_Y(event):
-        y = entradaMotor_Y.get()
-        
-        # Advertencia por si el valor ingresado no es entero
-        try:
-            int(y)
-        except:
-            mensajeAdvertencia = Label(interfazPrincipal, text = "Ingresar un dato numérico",
-                                       font = "TimesNewRoman 20 italic", 
-                                       bg = color_ventana2)
-            mensajeAdvertencia.place(x = 150, y = 50)
-        else:
-            # Ejecuta los pasos en el archivo .ino
-            for i in range(0, y + 1):
-                arduino.write(b'2')
-                time.sleep(0.1)
-    
-    # Motor en Z
-    def mov_Z(event):
-        z = entradaMotor_Z.get()
-        
-        # Advertencia por si el valor ingresado no es entero
-        try:
-            int(z)
-        except:
-            mensajeAdvertencia = Label(interfazPrincipal, text = "Ingresar un dato numérico",
-                                       font = "TimesNewRoman 20 italic", 
-                                       bg = color_ventana2)
-            mensajeAdvertencia.place(x = 150, y = 50)
-        else:
-            # Ejecuta los pasos en el archivo .ino
-            for i in range(0, z + 1):
-                arduino.write(b'3')
-                time.sleep(0.1)
-    
-    def reinicioPosiciones():
-        entradaMotor_X.delete(0, END)
-        entradaMotor_X.insert(0, "0")
-
-        entradaMotor_Y.delete(0, END)
-        entradaMotor_Y.insert(0, "0")
-
-        entradaMotor_Z.delete(0, END)
-        entradaMotor_Z.insert(0, "0")
 
 
 # Función que elimina el texto de las entradas nombre y apellido
