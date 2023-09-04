@@ -16,11 +16,6 @@ int pasos_X = 0;
 int pasos_Y = 0; 
 int pasos_Z = 0; 
 
-// Almacenamiento de la posición previa de los motores
-int prev_X = 0;
-int prev_Y = 0;
-int prev_Z = 0;
-
 void setup(){
 Serial.begin(9600); // Establecer velocidad de transmision de datos a 9600 baudios
 
@@ -50,22 +45,25 @@ void loop(){
      
      if (dato == 1){
       paso_der_X();
-      pasos_X++;
      }
      if (dato == 2){
-      paso_izq_Y();
-      pasos_Y++;
+      paso_izq_X();
      }
      if (dato == 3){
+      paso_der_Y();
+     }
+     if (dato == 4){
+      paso_izq_Y();
+     }
+     if (dato == 5){
+      paso_der_Z();
+     }
+     if (dato == 6){
       paso_izq_Z();
-      pasos_Z++;
      }
     }
 
    apagado(); // Evita que los motores se calienten
-   //pasos_X = 0;
-   //pasos_Y = 0;
-   //pasos_Z = 0;
 }
 
 // Paso hacia la derecha motor X

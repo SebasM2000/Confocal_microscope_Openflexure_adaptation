@@ -16,6 +16,9 @@ time.sleep(2)
 
 # Variables globales
 root = Tk()
+ult_pos_x = IntVar(value = 0)
+ult_pos_y = IntVar(value = 0)
+ult_pos_z = IntVar(value = 0)
 color_base = "#2d0b68"
 color_letra = "#a5f1f7"
 color_entrada = "#8a6ac2"
@@ -94,9 +97,16 @@ def ingresar():
             mensajeAdvertencia.place(x = 150, y = 50)
         else:
             # Ejecuta los pasos en el archivo .ino
-            # x = int(x)
-            for i in range(0, x):
+            # Dirección horaria X
+            while x > ult_pos_x:
                 arduino.write(b'1')
+                ult_pos_x += 1
+                time.sleep(0.1)
+
+            # Dirección anti-horaria X
+            while x < ult_pos_x:
+                arduino.write(b'2')
+                ult_pos_x -= 1
                 time.sleep(0.1)
     
     # Motor en Y
@@ -113,8 +123,16 @@ def ingresar():
             mensajeAdvertencia.place(x = 150, y = 50)
         else:
             # Ejecuta los pasos en el archivo .ino
-            for i in range(0, y):
-                arduino.write(b'2')
+            # Dirección horaria Y
+            while y > ult_pos_y:
+                arduino.write(b'3')
+                ult_pos_y += 1
+                time.sleep(0.1)
+            
+            # Dirección anti-horaria Y
+            while y < ult_pos_y:
+                arduino.write(b'4')
+                ult_pos_y -= 1
                 time.sleep(0.1)
     
     # Motor en Z
@@ -131,8 +149,16 @@ def ingresar():
             mensajeAdvertencia.place(x = 150, y = 50)
         else:
             # Ejecuta los pasos en el archivo .ino
-            for i in range(0, z):
-                arduino.write(b'3')
+            # Dirección horaria Z
+            while z > ult_pos_z:
+                arduino.write(b'5')
+                ult_pos_z += 1
+                time.sleep(0.1)
+
+            # Dirección anti-horaria Z
+            while z < ult_pos_z:
+                arduino.write(b'6')
+                ult_pos_z -= 1
                 time.sleep(0.1)
     
     def reinicioPosiciones():
