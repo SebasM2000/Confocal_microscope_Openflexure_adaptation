@@ -41,25 +41,24 @@ pinMode(13, OUTPUT);
 void loop(){
    if (Serial.available() > 0){ // Lee el valor enviado por el puerto serial
      char c = Serial.read(); // Lee el valor
-     int dato = c - '0'; // Transforma el valor (recibido en formato ASCII) en entero
      
-     if (dato == 1){
-      paso_der_X();
-     }
-     if (dato == 2){
+     if (c == '1'){
       paso_izq_X();
      }
-     if (dato == 3){
-      paso_der_Y();
+     if (c == '2'){
+      paso_der_X();
      }
-     if (dato == 4){
+     if (c == '3'){
       paso_izq_Y();
      }
-     if (dato == 5){
-      paso_der_Z();
+     if (c == '4'){
+      paso_der_Y();
      }
-     if (dato == 6){
+     if (c == '5'){
       paso_izq_Z();
+     }
+     if (c == '6'){
+      paso_der_Z();
      }
     }
 

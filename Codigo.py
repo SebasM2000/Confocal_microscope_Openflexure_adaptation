@@ -16,9 +16,9 @@ time.sleep(2)
 
 # Variables globales
 root = Tk()
-ult_pos_x = IntVar(value = 0)
-ult_pos_y = IntVar(value = 0)
-ult_pos_z = IntVar(value = 0)
+ult_pos_x = 0
+ult_pos_y = 0
+ult_pos_z = 0
 color_base = "#2d0b68"
 color_letra = "#a5f1f7"
 color_entrada = "#8a6ac2"
@@ -86,6 +86,7 @@ def ingresar():
     # Motor en X
     def mov_X(event):
         x = entradaMotor_X.get()
+        global ult_pos_x
         
         # Advertencia por si el valor ingresado no es entero
         try:
@@ -101,17 +102,18 @@ def ingresar():
             while x > ult_pos_x:
                 arduino.write(b'1')
                 ult_pos_x += 1
-                time.sleep(0.1)
+                #time.sleep(0.1)
 
             # Dirección anti-horaria X
             while x < ult_pos_x:
                 arduino.write(b'2')
                 ult_pos_x -= 1
-                time.sleep(0.1)
+                #time.sleep(0.1)
     
     # Motor en Y
     def mov_Y(event):
         y = entradaMotor_Y.get()
+        global ult_pos_y
         
         # Advertencia por si el valor ingresado no es entero
         try:
@@ -138,7 +140,8 @@ def ingresar():
     # Motor en Z
     def mov_Z(event):
         z = entradaMotor_Z.get()
-        
+        global ult_pos_z
+
         # Advertencia por si el valor ingresado no es entero
         try:
             z = int(z)
