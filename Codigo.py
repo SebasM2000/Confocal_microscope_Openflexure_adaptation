@@ -102,13 +102,11 @@ def ingresar():
             while x > ult_pos_x:
                 arduino.write(b'1')
                 ult_pos_x += 1
-                #time.sleep(0.1)
 
             # Dirección anti-horaria X
             while x < ult_pos_x:
                 arduino.write(b'2')
                 ult_pos_x -= 1
-                #time.sleep(0.1)
     
     # Motor en Y
     def mov_Y(event):
@@ -129,13 +127,11 @@ def ingresar():
             while y > ult_pos_y:
                 arduino.write(b'3')
                 ult_pos_y += 1
-                time.sleep(0.1)
             
             # Dirección anti-horaria Y
             while y < ult_pos_y:
                 arduino.write(b'4')
                 ult_pos_y -= 1
-                time.sleep(0.1)
     
     # Motor en Z
     def mov_Z(event):
@@ -156,13 +152,11 @@ def ingresar():
             while z > ult_pos_z:
                 arduino.write(b'5')
                 ult_pos_z += 1
-                time.sleep(0.1)
 
             # Dirección anti-horaria Z
             while z < ult_pos_z:
                 arduino.write(b'6')
                 ult_pos_z -= 1
-                time.sleep(0.1)
     
     def reinicioPosiciones():
         entradaMotor_X.delete(0, END)
