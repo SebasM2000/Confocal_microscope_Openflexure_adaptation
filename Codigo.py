@@ -82,6 +82,12 @@ def ingresar():
                               font = "TimesNewRoman 20 italic", bg = color_ventana2)
     mensajeBienvenida.place(x = 150, y = 50)
 
+    def Advertencia():
+        mensajeAdvertencia = Label(interfazPrincipal, text = "Ingresar un dato numérico",
+                                       font = "TimesNewRoman 15 italic", 
+                                       bg = color_ventana2, fg = "red")
+        mensajeAdvertencia.place(x = 250, y = 150)
+
     #### Funciones de los motores
     # Motor en X
     def mov_X(event):
@@ -92,10 +98,7 @@ def ingresar():
         try:
             x = int(x)
         except:
-            mensajeAdvertencia = Label(interfazPrincipal, text = "Ingresar un dato numérico",
-                                       font = "TimesNewRoman 20 italic", 
-                                       bg = color_ventana2)
-            mensajeAdvertencia.place(x = 150, y = 50)
+            Advertencia()
         else:
             # Ejecuta los pasos en el archivo .ino
             # Dirección horaria X
@@ -117,10 +120,7 @@ def ingresar():
         try:
             y = int(y)
         except:
-            mensajeAdvertencia = Label(interfazPrincipal, text = "Ingresar un dato numérico",
-                                       font = "TimesNewRoman 20 italic", 
-                                       bg = color_ventana2)
-            mensajeAdvertencia.place(x = 150, y = 50)
+            Advertencia()
         else:
             # Ejecuta los pasos en el archivo .ino
             # Dirección horaria Y
@@ -142,10 +142,7 @@ def ingresar():
         try:
             z = int(z)
         except:
-            mensajeAdvertencia = Label(interfazPrincipal, text = "Ingresar un dato numérico",
-                                       font = "TimesNewRoman 20 italic", 
-                                       bg = color_ventana2)
-            mensajeAdvertencia.place(x = 150, y = 50)
+            Advertencia()
         else:
             # Ejecuta los pasos en el archivo .ino
             # Dirección horaria Z
@@ -159,6 +156,8 @@ def ingresar():
                 ult_pos_z -= 1
     
     def reinicioPosiciones():
+        event = None
+
         entradaMotor_X.delete(0, END)
         entradaMotor_X.insert(0, "0")
 
@@ -167,6 +166,11 @@ def ingresar():
 
         entradaMotor_Z.delete(0, END)
         entradaMotor_Z.insert(0, "0")
+
+        # Ejecuta la posición de origen en cada motor
+        mov_X(event)
+        mov_Y(event)
+        mov_Z(event)
 
 
     # Etiquetas motores
