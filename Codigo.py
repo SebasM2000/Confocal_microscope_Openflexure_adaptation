@@ -19,9 +19,10 @@ root = Tk()
 ult_pos_x = 0
 ult_pos_y = 0
 ult_pos_z = 0
-color_base = "#2d0b68"
-color_letra = "#a5f1f7"
-color_entrada = "#8a6ac2"
+laser = False
+color_base = "#72cae2"
+color_letra = "#000000"
+color_entrada = "#ffffff"
 color_frame = "#4d2db3"
 color_ventana2 = "#b2e1fa"
 
@@ -88,7 +89,7 @@ def ingresar():
                                        bg = color_ventana2, fg = "red")
         mensajeAdvertencia.place(x = 250, y = 150)
 
-    #### Funciones de los motores
+    #### Funciones de control del arduino
     # Motor en X
     def mov_X(event):
         x = entradaMotor_X.get()
@@ -155,6 +156,7 @@ def ingresar():
                 arduino.write(b'6')
                 ult_pos_z -= 1
     
+    # Regreso al origen de los motores
     def reinicioPosiciones():
         event = None
 
@@ -171,6 +173,18 @@ def ingresar():
         mov_X(event)
         mov_Y(event)
         mov_Z(event)
+
+
+    # Control del láser
+    def controlLaser():
+        global laser
+
+        if (laser == False) | (laser == None):
+            laser = True
+            arduino.write(b'7')
+        else:
+            laser = False
+            arduino.write(b'8')
 
 
     # Etiquetas motores
@@ -215,13 +229,18 @@ def ingresar():
 
     # Botones
     botonSalir2 = Button(interfazPrincipal, text = "Salir", 
-                    command = root.destroy, bg = "red")
+                    command = root.destroy, bg = "#bb9778")
     botonSalir2.place(x = 335, y = 400)
 
 
     botonPosOrigen = Button(interfazPrincipal, text = "Mover motores al origen", bg = "#e1e7eb",
                             command = reinicioPosiciones)
     botonPosOrigen.place(x = 270, y = 240)
+
+
+    botonLaserOn = Button(interfazPrincipal, text = "Encender/Apagar Láser", bg = "#e1e7eb", 
+                          command = controlLaser)
+    botonLaserOn.place(x = 100, y = 400)
 
     # Menu desplegable para opciones de almacenamiento de imágenes
     infoAlmacenamiento = Label(interfazPrincipal, text = "Almacenamiento \n USB", bg = color_ventana2,
@@ -292,50 +311,50 @@ tituloBienvenida.place(x = 100, y = 50)
 # Nombre
 infoNombre = Label(root, text = "Nombre(s): ", bg = color_base,
                   font = "TimesNewRoman 13", fg = color_letra)
-infoNombre.place(x = 220, y = 200)
+infoNombre.place(x = 180, y = 200)
 
 entradaNombre = Entry(root, bd = 1, bg = color_entrada, width = 30, textvariable = nombre)
 entradaNombre.insert(0, "Investigador")
 entradaNombre.bind("<Button-1>", borrar_texto(entradaNombre))
-entradaNombre.place(x = 315, y = 202)
+entradaNombre.place(x = 275, y = 202)
 
 
 # Apellido
 infoApellido = Label(root, text = "Apellido(s):", bg = color_base,
                   font = "TimesNewRoman 13", fg = color_letra)
-infoApellido.place(x = 220, y = 240)
+infoApellido.place(x = 180, y = 240)
 
 entradaApellido = Entry(root, bd = 1, bg = color_entrada, width = 30, textvariable = apellido)
 entradaApellido.insert(0, "Anónimo")
 entradaApellido.bind("<Button-1>", borrar_texto(entradaApellido))
-entradaApellido.place(x = 315, y = 242)
+entradaApellido.place(x = 275, y = 242)
 
 
 # Correo
 infoCorreo = Label(root, text = "Correo:", bg = color_base,
                    font = "TimesNewRoman 13", fg = color_letra)
-infoCorreo.place(x = 220, y = 280)
+infoCorreo.place(x = 180, y = 280)
 
 entradaCorreo = Entry(root, bd = 1, bg = color_entrada, width = 30, textvariable = correo)
 entradaCorreo.insert(0, "Escriba aquí su correo")
 entradaCorreo.bind("<Button-1>", borrar_texto(entradaCorreo))
-entradaCorreo.place(x = 315, y = 282)
+entradaCorreo.place(x = 275, y = 282)
 
 # Botones
 botonSalir = Button(root, text = "Salir", 
-                    command = root.destroy, bg = "red")
-botonSalir.place(x = 600, y = 400)
+                    command = root.destroy, bg = "#bb9778")
+botonSalir.place(x = 610, y = 420)
 
 
 botonUsuarioFrecuente = Button(root, text = "Usuario frecuente", 
-                               bg = "#3a85f7", state = "normal",
+                               bg = "#c4c4c4", state = "normal",
                                command = usuarioFrecuente)
-botonUsuarioFrecuente.place(x = 100, y = 400)
+botonUsuarioFrecuente.place(x = 325, y = 375)
 
 
-botonIngresar = Button(root, text = "Ingresar", bg = "#48c128",
+botonIngresar = Button(root, text = "Ingresar", bg = "#c4c4c4",
                        command = ingresar)
-botonIngresar.place(x = 390, y = 330)
+botonIngresar.place(x = 355, y = 330)
 
 
 botonAtras = Button(root, text = "Atrás", command = usuarioFrecuente, bg = "#3a85f7")

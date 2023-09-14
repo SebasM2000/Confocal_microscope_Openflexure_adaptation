@@ -37,30 +37,46 @@ pinMode(10, OUTPUT);
 pinMode(11, OUTPUT);
 pinMode(12, OUTPUT);
 pinMode(13, OUTPUT);
+
+// Láser para Arduino
+pinMode(A0, OUTPUT);
 }
 
 void loop(){
    if (Serial.available() > 0){ // Lee el valor enviado por el puerto serial
      char c = Serial.read(); // Lee el valor
      
+     // Control Motor X
      if (c == '1'){
       paso_izq_X();
      }
      if (c == '2'){
       paso_der_X();
      }
+
+     // Control Motor Y
      if (c == '3'){
       paso_izq_Y();
      }
      if (c == '4'){
       paso_der_Y();
      }
+
+     // Control Motor Z
      if (c == '5'){
       paso_izq_Z();
      }
      if (c == '6'){
       paso_der_Z();
      }
+
+     // Control láser
+     if (c == '7'){
+      laser_on();
+      }
+     if (c == '8'){
+      laser_off();
+      }
     }
 
    apagado(); // Evita que los motores se calienten
@@ -387,3 +403,13 @@ void apagado() {
  digitalWrite(pinesMotor[1], LOW);  
  digitalWrite(pinesMotor[0], LOW);  
  }
+
+// Encendido del láser
+void laser_on(){
+  digitalWrite(A0, HIGH);
+  }
+
+// Apagado del láser
+void laser_off(){
+  digitalWrite(A0, LOW);
+  }
