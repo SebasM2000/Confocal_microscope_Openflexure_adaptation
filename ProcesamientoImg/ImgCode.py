@@ -13,9 +13,7 @@ rutaImg = "/home/ender3/Sebastian_Marin/ProcesamientoImg/IMGPrueba.jpg"
 img = cv.imread(rutaImg)
 img2 = cv.resize(img, (255, 255))
 
-
-
-cv.imshow('Prueba gato', img2)
+cv.imshow('P', img2)
 
 cv.waitKey(0)
 cv.destroyAllWindows()
