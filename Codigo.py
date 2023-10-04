@@ -5,6 +5,7 @@ Created on Sat Jun  3 14:17:52 2023
 @author: Sebastián Marín Ruiz
 """
 # Librerías
+import ProcesamientoImg.CamaraRB as Pros
 import serial
 import time
 from tkinter import *
@@ -186,6 +187,11 @@ def ingresar():
             laser = False
             arduino.write(b'8')
 
+    # Control Cámara
+    def tomarCaptura():
+        ruta = os.path.dirname(__file__)
+        Pros.tomarFoto(ruta)
+
 
     # Etiquetas motores
     infoPosMotores = Label(interfazPrincipal, text = "Posición motores:", bg = color_ventana2,
@@ -241,6 +247,11 @@ def ingresar():
     botonLaserOn = Button(interfazPrincipal, text = "Encender/Apagar Láser", bg = "#e1e7eb", 
                           command = controlLaser)
     botonLaserOn.place(x = 100, y = 400)
+
+
+    botonCaptura = Button(interfazPrincipal, text = "Tomar foto", bg = "#e1e7eb", 
+                          command = lambda: tomarCaptura())
+    botonCaptura.place(x = 200, y = 400)
 
     # Menu desplegable para opciones de almacenamiento de imágenes
     infoAlmacenamiento = Label(interfazPrincipal, text = "Almacenamiento \n USB", bg = color_ventana2,
