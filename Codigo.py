@@ -188,9 +188,9 @@ def ingresar():
             arduino.write(b'8')
 
     # Control Cámara
-    def tomarCaptura():
-        ruta = os.path.dirname(__file__)
-        Pros.tomarFoto(ruta)
+#     def tomarCaptura():
+#         ruta = os.path.dirname(__file__)
+#         Pros.tomarFoto(ruta)
 
 
     # Etiquetas motores
@@ -249,9 +249,9 @@ def ingresar():
     botonLaserOn.place(x = 100, y = 400)
 
 
-    botonCaptura = Button(interfazPrincipal, text = "Tomar foto", bg = "#e1e7eb", 
-                          command = lambda: tomarCaptura())
-    botonCaptura.place(x = 200, y = 400)
+#     botonCaptura = Button(interfazPrincipal, text = "Tomar foto", bg = "#e1e7eb", 
+#                           command = lambda: tomarCaptura())
+#     botonCaptura.place(x = 200, y = 400)
 
     # Menu desplegable para opciones de almacenamiento de imágenes
     infoAlmacenamiento = Label(interfazPrincipal, text = "Almacenamiento \n USB", bg = color_ventana2,
