@@ -20,6 +20,9 @@ root = Tk()
 ult_pos_x = 0
 ult_pos_y = 0
 ult_pos_z = 0
+max_x = 200
+max_y = 200
+max_z = 10
 laser = False
 color_base = "#72cae2"
 color_letra = "#000000"
@@ -102,6 +105,11 @@ def ingresar():
         except:
             Advertencia()
         else:
+
+            # Límite mínimo
+            if x < 0:
+                x = 0
+
             # Ejecuta los pasos en el archivo .ino
             # Dirección horaria X
             while x > ult_pos_x:
@@ -124,6 +132,10 @@ def ingresar():
         except:
             Advertencia()
         else:
+            # Límite mínimo
+            if y < 0:
+                y = 0
+
             # Ejecuta los pasos en el archivo .ino
             # Dirección horaria Y
             while y > ult_pos_y:
@@ -146,6 +158,10 @@ def ingresar():
         except:
             Advertencia()
         else:
+            # Límite mínimo
+            if z < 0:
+                z = 0
+
             # Ejecuta los pasos en el archivo .ino
             # Dirección horaria Z
             while z > ult_pos_z:
@@ -191,6 +207,21 @@ def ingresar():
     #def tomarCaptura():
         #ruta = os.path.dirname(__file__)
         #Pros.tomarFoto(ruta)
+
+    # Medición automática de los motores
+    def automatizacion():
+        event = None
+        global ult_pos_z, ult_pos_y, ult_pos_x, max_x, max_y, max_z
+        for k in range(ult_pos_z, max_z):
+            entradaMotor_Z()
+            #tomarCaptura()
+            for j in range(ult_pos_y, max_y):
+                entradaMotor_Y()
+                #tomarCaptura()
+                for i in range(ult_pos_x, max_x):
+                    entradaMotor_X.delete(0, END)
+                    entradaMotor_X.insert()
+                    #tomarCaptura()
 
 
     # Etiquetas motores
@@ -252,6 +283,9 @@ def ingresar():
     #botonCaptura = Button(interfazPrincipal, text = "Tomar foto", bg = "#e1e7eb", 
      #                     command = lambda: tomarCaptura())
     #botonCaptura.place(x = 200, y = 400)
+
+    botonIniciarMedicion = Button(interfazPrincipal, text = "Iniciar medición", 
+                                  bg = "#e1e7eb", command = automatizacion)
 
     # Menu desplegable para opciones de almacenamiento de imágenes
     infoAlmacenamiento = Label(interfazPrincipal, text = "Almacenamiento \n USB", bg = color_ventana2,
