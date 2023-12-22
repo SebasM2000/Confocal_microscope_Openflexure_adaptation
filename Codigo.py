@@ -12,7 +12,7 @@ from tkinter import *
 import os
 
 # Configuración arduino
-arduino =  serial.Serial("COM3", baudrate = 9600, timeout = 1)
+arduino =  serial.Serial("/dev/ttyACM0", baudrate = 9600, timeout = 1)
 time.sleep(2)
 
 # Variables globales
