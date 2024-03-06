@@ -17,29 +17,27 @@ time.sleep(2)
 
 # Variables globales
 root = Tk()
-ult_pos_x = 0
-ult_pos_y = 0
-ult_pos_z = 0
-x = None
-y = None
-z = None
-max_x = 1000000
-max_y = max_x
-max_z = 10
-min_x = -max_x
-min_y = -max_y
-min_z = 0
+
+# Movimiento motores
+ult_pos_x, ult_pos_y, ult_pos_z = 0, 0, 0 # Última posicion
+x, y, z = None, None, None # Posición actual (empezando en un valor nulo)
+max_x, max_y, max_z = 1000000, 1000000, 10 # Límite superior
+min_x, min_y, min_z = -max_x, -max_y, 0 # Límite inferior
+
+# Control láser
 laser = False
+
+# Colores
 color_base = "#72cae2"
 color_letra = "#000000"
 color_entrada = "#ffffff"
 color_frame = "#4d2db3"
 color_ventana2 = "#b2e1fa"
 
-#---------------------------------------
-#-   Configuración ventana principal   -
-#---------------------------------------
-def config_principal():
+#-------------------------------------------
+#-   Configuración ventana de bienvenida   -
+#-------------------------------------------
+def ventanaBienvenida():
     # Título de ventana
     root.title("Reconocimiento de usuario") 
 
@@ -58,10 +56,10 @@ def config_principal():
     # Configuraciones color y forma del cursor
     root.config(bg = color_base, cursor = "dot")
 
-# Ejecución del código principal
-config_principal()
+# Ejecución de ventana de bienvenida
+ventanaBienvenida()
 
-
+# Datos usuario
 nombre = StringVar()
 apellido = StringVar()
 correo = StringVar()
@@ -69,7 +67,10 @@ correo = StringVar()
 visibilidadBoton = BooleanVar()
 visibilidadBoton.set(True)
 
-# Segunda ventana
+#-------------------------
+#-   Ventana principal   -
+#-------------------------
+
 def ingresar():
     motorX = StringVar()
     motorY = StringVar()
@@ -78,7 +79,7 @@ def ingresar():
     SeleccionMemoria = StringVar()
     SeleccionMemoria.set(varOpciones[0])
 
-    # Configuración segunda ventana
+    # Configuración
     interfazPrincipal = Toplevel()
     interfazPrincipal.title("Configuración microscopio")
     interfazPrincipal.geometry("750x500")
@@ -102,6 +103,7 @@ def ingresar():
     #---------------------------------------------
     #-  Funciones de almacenamiento de posición  -
     #---------------------------------------------
+        
     # Guardar coordenadas en archivo .txt
     def guardarCoordenadas(x, y, z):
         with open("coordenadas.txt", "w") as file:
@@ -277,7 +279,7 @@ def ingresar():
     # Medición automática de los motores
     def automatizacion():
         event = None
-        global ult_pos_z, ult_pos_y, ult_pos_x, max_x, max_y, max_z
+        global ult_pos_x, ult_pos_y, ult_pos_z, max_x, max_y, max_z, min_x, min_y, min_z
         for k in range(ult_pos_z, max_z):
             entradaMotor_Z()
             #tomarCaptura()
@@ -288,7 +290,20 @@ def ingresar():
                     entradaMotor_X.delete(0, END)
                     entradaMotor_X.insert()
                     #tomarCaptura()
-
+ # Prueba para adaptar
+#for i in range(5):
+#    for j in range(5):
+ #       for k in range(5):
+ #           print('x: ', x)
+ #           x += 1
+ #       
+ #       print('y: ', y)
+ #       y += 1
+ #       x = 0
+ #   
+ #   print('z: ', z)
+ #   z += 1
+ #   y = 0
 
     # Etiquetas motores
     infoPosMotores = Label(interfazPrincipal, text = "Posición motores:", bg = color_ventana2,
