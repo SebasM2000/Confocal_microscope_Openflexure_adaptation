@@ -5,14 +5,14 @@ Created on Sat Jun  3 14:17:52 2023
 @author: Sebastián Marín Ruiz
 """
 # Librerías
-import ProcesamientoImg.CamaraRB as Pros
+#import ProcesamientoImg.CamaraRB as Pros
 import serial
 import time
 from tkinter import *
 import os
 
 # Configuración arduino
-arduino =  serial.Serial("/dev/ttyACM0", baudrate = 9600, timeout = 1)
+arduino =  serial.Serial("COM3", baudrate = 9600, timeout = 1)
 time.sleep(2)
 
 # Variables globales
@@ -20,6 +20,15 @@ root = Tk()
 ult_pos_x = 0
 ult_pos_y = 0
 ult_pos_z = 0
+x = None
+y = None
+z = None
+max_x = 1000000
+max_y = max_x
+max_z = 10
+min_x = -max_x
+min_y = -max_y
+min_z = 0
 laser = False
 color_base = "#72cae2"
 color_letra = "#000000"
@@ -27,9 +36,9 @@ color_entrada = "#ffffff"
 color_frame = "#4d2db3"
 color_ventana2 = "#b2e1fa"
 
-#---------------------------------------#
-#--  Configuración ventana principal  --#
-#---------------------------------------#
+#---------------------------------------
+#-   Configuración ventana principal   -
+#---------------------------------------
 def config_principal():
     # Título de ventana
     root.title("Reconocimiento de usuario") 
@@ -90,11 +99,59 @@ def ingresar():
                                        bg = color_ventana2, fg = "red")
         mensajeAdvertencia.place(x = 250, y = 150)
 
-    #### Funciones de control del arduino
+    #---------------------------------------------
+    #-  Funciones de almacenamiento de posición  -
+    #---------------------------------------------
+    # Guardar coordenadas en archivo .txt
+    def guardarCoordenadas(x, y, z):
+        with open("coordenadas.txt", "w") as file:
+            file.write(f"{x},{y},{z}")
+
+    # Leer coordenadas del archivo .txt
+    def leerCoordenadas():
+        try:
+            with open("coordenadas.txt", "r") as file:
+                line = file.readline()
+
+                if line:
+                    return tuple(map(int, line.split(',')))
+        except FileNotFoundError:
+            return None
+        
+    # Función que se ejecuta al cerrar la ventana
+    def cerrarVentana():
+
+        # Guardar las coordenadas antes de cerrar
+        guardarCoordenadas(entradaMotor_X.get(), entradaMotor_Y.get(), entradaMotor_Z.get())
+        root.destroy()
+
+    # Sustitución últimas posiciones en las entradas X, Y, Z
+    def visualizacionUltPos():
+        event = None
+        
+        entradaMotor_X.delete(0, END)
+        entradaMotor_X.insert(0, str(ult_pos_x))
+
+        entradaMotor_Y.delete(0, END)
+        entradaMotor_Y.insert(0, str(ult_pos_y))
+
+        entradaMotor_Z.delete(0, END)
+        entradaMotor_Z.insert(0, str(ult_pos_z))
+
+        # Ejecuta posiciones
+        mov_X(event)
+        mov_Y(event)
+        mov_Z(event)
+
+
+    #-------------------------------------------
+    #     Funciones de control del arduino     -
+    #-------------------------------------------
+        
     # Motor en X
     def mov_X(event):
+        global x, ult_pos_x, max_x, min_x
         x = entradaMotor_X.get()
-        global ult_pos_x
         
         # Advertencia por si el valor ingresado no es entero
         try:
@@ -102,6 +159,15 @@ def ingresar():
         except:
             Advertencia()
         else:
+
+            # Límite mínimo
+            if x < min_x:
+                x = min_x
+            
+            # Límite máximo
+            elif x > max_x:
+                x = max_x
+
             # Ejecuta los pasos en el archivo .ino
             # Dirección horaria X
             while x > ult_pos_x:
@@ -115,8 +181,8 @@ def ingresar():
     
     # Motor en Y
     def mov_Y(event):
+        global y, ult_pos_y, max_y, min_y
         y = entradaMotor_Y.get()
-        global ult_pos_y
         
         # Advertencia por si el valor ingresado no es entero
         try:
@@ -124,6 +190,14 @@ def ingresar():
         except:
             Advertencia()
         else:
+            # Límite mínimo
+            if y < min_y:
+                y = min_y
+
+            # Límite máximo
+            elif y > max_y:
+                y = max_y
+
             # Ejecuta los pasos en el archivo .ino
             # Dirección horaria Y
             while y > ult_pos_y:
@@ -137,8 +211,8 @@ def ingresar():
     
     # Motor en Z
     def mov_Z(event):
+        global z, ult_pos_z, max_z, min_z
         z = entradaMotor_Z.get()
-        global ult_pos_z
 
         # Advertencia por si el valor ingresado no es entero
         try:
@@ -146,6 +220,14 @@ def ingresar():
         except:
             Advertencia()
         else:
+            # Límite mínimo
+            if z < min_z:
+                z = min_z
+
+            # Límite máximo
+            elif z > max_z:
+                z = max_z
+
             # Ejecuta los pasos en el archivo .ino
             # Dirección horaria Z
             while z > ult_pos_z:
@@ -192,6 +274,21 @@ def ingresar():
 #         ruta = os.path.dirname(__file__)
 #         Pros.tomarFoto(ruta)
 
+    # Medición automática de los motores
+    def automatizacion():
+        event = None
+        global ult_pos_z, ult_pos_y, ult_pos_x, max_x, max_y, max_z
+        for k in range(ult_pos_z, max_z):
+            entradaMotor_Z()
+            #tomarCaptura()
+            for j in range(ult_pos_y, max_y):
+                entradaMotor_Y()
+                #tomarCaptura()
+                for i in range(ult_pos_x, max_x):
+                    entradaMotor_X.delete(0, END)
+                    entradaMotor_X.insert()
+                    #tomarCaptura()
+
 
     # Etiquetas motores
     infoPosMotores = Label(interfazPrincipal, text = "Posición motores:", bg = color_ventana2,
@@ -231,11 +328,18 @@ def ingresar():
     entradaMotor_Z.insert(0, "0")
     entradaMotor_Z.place(x = 410, y = 200)
     entradaMotor_Z.bind("<Return>", mov_Z)
-    
+
+    # Lectura de últimas coordenadas en el archivo .txt
+    ultimasCoordenadas = leerCoordenadas()
+    if ultimasCoordenadas:
+        global x, y, z, ult_pos_x, ult_pos_y, ult_pos_z
+        ult_pos_x, ult_pos_y, ult_pos_z = ultimasCoordenadas[0], ultimasCoordenadas[1], ultimasCoordenadas[2]
+        x, y, z = ult_pos_x, ult_pos_y, ult_pos_z
+        visualizacionUltPos()
 
     # Botones
     botonSalir2 = Button(interfazPrincipal, text = "Salir", 
-                    command = root.destroy, bg = "#bb9778")
+                    command = cerrarVentana, bg = "#bb9778")
     botonSalir2.place(x = 335, y = 400)
 
 
@@ -252,6 +356,9 @@ def ingresar():
 #     botonCaptura = Button(interfazPrincipal, text = "Tomar foto", bg = "#e1e7eb", 
 #                           command = lambda: tomarCaptura())
 #     botonCaptura.place(x = 200, y = 400)
+
+    botonIniciarMedicion = Button(interfazPrincipal, text = "Iniciar medición", 
+                                  bg = "#e1e7eb", command = automatizacion)
 
     # Menu desplegable para opciones de almacenamiento de imágenes
     infoAlmacenamiento = Label(interfazPrincipal, text = "Almacenamiento \n USB", bg = color_ventana2,
@@ -308,7 +415,7 @@ def usuarioFrecuente():
         visibilidadBoton.set(True)
 
 #-----------------------------------------------------
-#               Etiquetas y entradas                 |
+#               Etiquetas y entradas                 -
 #-----------------------------------------------------
 # Titulo
 tituloBienvenida = Label(root, text = "¡Bienvenido al laboratorio de Acusto-óptica\n y Radiometría!", 
