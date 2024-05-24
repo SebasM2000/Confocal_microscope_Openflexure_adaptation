@@ -12,7 +12,7 @@ from tkinter import *
 import os
 
 # Configuración arduino
-arduino =  serial.Serial("COM3", baudrate = 9600, timeout = 1)
+arduino =  serial.Serial("/dev/ttyACM0", baudrate = 9600, timeout = 1)
 time.sleep(2)
 
 # Variables globales
@@ -288,8 +288,9 @@ def ingresar():
                 #tomarCaptura()
                 for i in range(ult_pos_x, max_x):
                     entradaMotor_X.delete(0, END)
-                    entradaMotor_X.insert()
+                    entradaMotor_X.insert(0, str(ult_pos_x + 1))
                     #tomarCaptura()
+
  # Prueba para adaptar
 #for i in range(5):
 #    for j in range(5):

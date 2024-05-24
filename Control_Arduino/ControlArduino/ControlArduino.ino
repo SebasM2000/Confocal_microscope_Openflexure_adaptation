@@ -11,6 +11,8 @@
 int retardo = 5; // Tiempo de retardo en milisegundos
 int pos_origen = 0; // Valor en grados donde se encuentra el motor
 int pinesMotor[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+const int laserPin = 6;
+char ultimoCaracter = '0';
 
 // Variables de la info recibida en Python
 int pasos_X = 0; 
@@ -27,7 +29,7 @@ pinMode(4, OUTPUT);
 pinMode(5, OUTPUT);
 
 // Motor en Y
-pinMode(6, OUTPUT);
+//pinMode(6, OUTPUT);
 pinMode(7, OUTPUT);
 pinMode(8, OUTPUT);
 pinMode(9, OUTPUT);
@@ -39,12 +41,13 @@ pinMode(12, OUTPUT);
 pinMode(13, OUTPUT);
 
 // Láser para Arduino
-pinMode(A0, OUTPUT);
+pinMode(laserPin, OUTPUT);
 }
 
 void loop(){
    if (Serial.available() > 0){ // Lee el valor enviado por el puerto serial
      char c = Serial.read(); // Lee el valor
+     ultimoCaracter = c;
      
      // Control Motor X
      if (c == '1'){
@@ -69,15 +72,16 @@ void loop(){
      if (c == '6'){
       paso_der_Z();
      }
+   }
 
      // Control láser
-     if (c == '7'){
-      laser_on();
-      }
-     if (c == '8'){
-      laser_off();
-      }
+   if (ultimoCaracter == '7'){
+    laser_on();
     }
+   if (ultimoCaracter == '8'){
+    laser_off();
+    }
+    
 
    apagado(); // Evita que los motores se calienten
 }
@@ -406,10 +410,10 @@ void apagado() {
 
 // Encendido del láser
 void laser_on(){
-  digitalWrite(A0, HIGH);
-  }
+ analogWrite(laserPin, 1);
+ }
 
 // Apagado del láser
 void laser_off(){
-  digitalWrite(A0, LOW);
-  }
+ analogWrite(laserPin, 0);
+ }
