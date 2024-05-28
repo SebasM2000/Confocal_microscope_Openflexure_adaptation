@@ -11,7 +11,7 @@
 int retardo = 5; // Tiempo de retardo en milisegundos
 int pos_origen = 0; // Valor en grados donde se encuentra el motor
 int pinesMotor[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
-const int laserPin = 6;
+const int laserPin = A0;
 char ultimoCaracter = '0';
 
 // Variables de la info recibida en Python
@@ -410,10 +410,10 @@ void apagado() {
 
 // Encendido del láser
 void laser_on(){
- analogWrite(laserPin, 1);
+ digitalWrite(laserPin, HIGH);
  }
 
 // Apagado del láser
 void laser_off(){
- analogWrite(laserPin, 0);
+ digitalWrite(laserPin, LOW);
  }
