@@ -12,7 +12,7 @@ from tkinter import *
 import os
 
 # Configuración arduino
-arduino =  serial.Serial("/dev/ttyACM1", baudrate = 9600, timeout = 1)
+arduino =  serial.Serial("/dev/ttyACM0", baudrate = 9600, timeout = 1)
 time.sleep(2)
 
 # Variables globales
@@ -21,8 +21,8 @@ root = Tk()
 # Movimiento motores
 ult_pos_x, ult_pos_y, ult_pos_z = 0, 0, 0 # Última posicion
 x, y, z = None, None, None # Posición actual (empezando en un valor nulo)
-max_x, max_y, max_z = 1000000, 1000000, 10 # Límite superior
-min_x, min_y, min_z = -max_x, -max_y, 0 # Límite inferior
+max_x, max_y, max_z = 1000000, 1000000, 100000 # Límite superior
+min_x, min_y, min_z = -max_x, -max_y, -max_z # Límite inferior
 
 # Control láser
 laser = False
