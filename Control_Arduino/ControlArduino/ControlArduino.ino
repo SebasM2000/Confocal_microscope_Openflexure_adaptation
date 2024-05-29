@@ -11,7 +11,7 @@
 int retardo = 5; // Tiempo de retardo en milisegundos
 int pos_origen = 0; // Valor en grados donde se encuentra el motor
 int pinesMotor[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
-const int laserPin = 6;
+const int laserPin = A0;
 char ultimoCaracter = '0';
 
 // Variables de la info recibida en Python
@@ -28,13 +28,13 @@ pinMode(3, OUTPUT);
 pinMode(4, OUTPUT);
 pinMode(5, OUTPUT);
 
-// Motor en Y
-//pinMode(6, OUTPUT);
+// Motor en Z
+pinMode(6, OUTPUT);
 pinMode(7, OUTPUT);
 pinMode(8, OUTPUT);
 pinMode(9, OUTPUT);
 
-// Motor en Z
+// Motor en Y
 pinMode(10, OUTPUT);
 pinMode(11, OUTPUT);
 pinMode(12, OUTPUT);
@@ -188,8 +188,8 @@ void paso_izq_X() {
   delay(retardo);
 }
 
-// Paso hacia la derecha motor Y
-void paso_der_Y(){
+// Paso hacia la derecha motor Z
+void paso_der_Z(){
  digitalWrite(pinesMotor[4], LOW);  
  digitalWrite(pinesMotor[5], LOW); 
  digitalWrite(pinesMotor[6], LOW);  
@@ -239,8 +239,8 @@ void paso_der_Y(){
   delay(retardo);
 }
 
-// Pasos a la izquierda motor Y
-void paso_izq_Y() {     
+// Pasos a la izquierda motor Z
+void paso_izq_Z() {     
  digitalWrite(pinesMotor[4], HIGH);  
  digitalWrite(pinesMotor[5], LOW); 
  digitalWrite(pinesMotor[6], LOW);  
@@ -290,8 +290,8 @@ void paso_izq_Y() {
   delay(retardo);
 }
 
-// Paso hacia la derecha motor Z
-void paso_der_Z(){     
+// Paso hacia la derecha motor Y
+void paso_der_Y(){     
  digitalWrite(pinesMotor[8], LOW);  
  digitalWrite(pinesMotor[9], LOW); 
  digitalWrite(pinesMotor[10], LOW);  
@@ -341,8 +341,8 @@ void paso_der_Z(){
   delay(retardo);
 }
 
-// Pasos a la izquierda motor Z
-void paso_izq_Z() {     
+// Pasos a la izquierda motor Y
+void paso_izq_Y() {     
  digitalWrite(pinesMotor[8], HIGH);  
  digitalWrite(pinesMotor[9], LOW); 
  digitalWrite(pinesMotor[10], LOW);  
@@ -410,10 +410,10 @@ void apagado() {
 
 // Encendido del láser
 void laser_on(){
- analogWrite(laserPin, 1);
+ digitalWrite(laserPin, HIGH);
  }
 
 // Apagado del láser
 void laser_off(){
- analogWrite(laserPin, 0);
+ digitalWrite(laserPin, LOW);
  }
