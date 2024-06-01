@@ -6,6 +6,7 @@ Created on Sat Jun  3 14:17:52 2023
 """
 # Librerías
 #import ProcesamientoImg.CamaraRB as pcrb
+import Pruebas.capturaCamara as PiCam
 import serial
 import time
 from tkinter import *
@@ -276,8 +277,7 @@ def ingresar():
 
     # Control Cámara
     def tomarCaptura():
-        ruta = os.path.dirname(__file__)
-        pcrb.tomarFoto(ruta)
+        PiCam.foto()
 
     # Medición automática de los motores
     def automatizacion():
@@ -296,17 +296,21 @@ def ingresar():
                 #pcrb.construccionImg2D()
                 entradaMotor_X.delete(0, END)
                 entradaMotor_X.insert(0, str(ult_pos_x + 1))
+                mov_X(event)
 
             entradaMotor_Y.delete(0, END)
             entradaMotor_Y.insert(0, str(ult_pos_y + 1))
+            mov_Y(event)
             
             for i in range(medida_X):
                 #pcrb.construccionImg2D()
                 entradaMotor_X.delete(0, END)
                 entradaMotor_X.insert(0, str(ult_pos_x - 1))
+                mov_X(event)
 
             entradaMotor_Y.delete(0, END)
             entradaMotor_Y.insert(0, str(ult_pos_y + 1))
+            mov_Y(event)
             
 
  # Prueba para adaptar
@@ -439,9 +443,9 @@ def ingresar():
     botonLaserOn.place(x = 135, y = 410)
 
 
-#     botonCaptura = Button(interfazPrincipal, text = "Tomar foto", bg = "#e1e7eb", 
-#                           command = lambda: tomarCaptura())
-#     botonCaptura.place(x = 200, y = 400)
+    botonCaptura = Button(interfazPrincipal, text = "Tomar foto", bg = "#e1e7eb", 
+                          command = tomarCaptura())
+    botonCaptura.place(x = 200, y = 400)
 
 
     botonIniciarMedicion = Button(interfazPrincipal, text = "Iniciar medición", 
