@@ -5,15 +5,15 @@ Created on Sat Jun  3 14:17:52 2023
 @author: Sebastián Marín Ruiz
 """
 # Librerías
-#import ProcesamientoImg.CamaraRB as Pros
+#import ProcesamientoImg.CamaraRB as pcrb
 import serial
 import time
 from tkinter import *
 import os
 
 # Configuración arduino
-arduino =  serial.Serial("/dev/ttyACM0", baudrate = 9600, timeout = 1)
-time.sleep(2)
+#arduino =  serial.Serial("/dev/ttyACM0", baudrate = 9600, timeout = 1)
+#time.sleep(2)
 
 # Variables globales
 root = Tk()
@@ -75,6 +75,9 @@ def ingresar():
     motorX = StringVar()
     motorY = StringVar()
     motorZ = StringVar()
+    medida_X = StringVar()
+    medida_Y = StringVar()
+    medida_Z = StringVar()
     varOpciones = ["Seleccione memoria", "Memoria 1", "Memoria 2"]
     SeleccionMemoria = StringVar()
     SeleccionMemoria.set(varOpciones[0])
@@ -272,78 +275,128 @@ def ingresar():
             arduino.write(b'8')
 
     # Control Cámara
-#     def tomarCaptura():
-#         ruta = os.path.dirname(__file__)
-#         Pros.tomarFoto(ruta)
+    def tomarCaptura():
+        ruta = os.path.dirname(__file__)
+        pcrb.tomarFoto(ruta)
 
     # Medición automática de los motores
     def automatizacion():
         event = None
         global ult_pos_x, ult_pos_y, ult_pos_z, max_x, max_y, max_z, min_x, min_y, min_z
-        for k in range(ult_pos_z, max_z):
-            entradaMotor_Z()
+        #for k in range(ult_pos_z, max_z):
+            #entradaMotor_Z()
             #tomarCaptura()
-            for j in range(ult_pos_y, max_y):
-                entradaMotor_Y()
+        for j in range(ult_pos_y, max_y):
+            entradaMotor_Y()
                 #tomarCaptura()
-                for i in range(ult_pos_x, max_x):
-                    entradaMotor_X.delete(0, END)
-                    entradaMotor_X.insert(0, str(ult_pos_x + 1))
+            for i in range(ult_pos_x, max_x):
+                entradaMotor_X.delete(0, END)
+                entradaMotor_X.insert(0, str(ult_pos_x + 1))
                     #tomarCaptura()
 
  # Prueba para adaptar
 #for i in range(5):
-#    for j in range(5):
- #       for k in range(5):
- #           print('x: ', x)
- #           x += 1
- #       
- #       print('y: ', y)
- #       y += 1
- #       x = 0
- #   
- #   print('z: ', z)
- #   z += 1
- #   y = 0
+    #for j in range(5):
+    #    for k in range(10):
+    #        x += 1
+    #        print('x: ', x)
+    #    y += 1
+    #    print('----y----: ', y)
+    #    for k in range(10):
+    #        x -= 1
+    #        print('x: ', x)
+        
+    #    y += 1
+    #    print('----y----: ', y)
+    
+    #z += 1
+    #print('z: ', z)
 
-    # Etiquetas motores
+
+    # Etiquetas
     infoPosMotores = Label(interfazPrincipal, text = "Posición motores:", bg = color_ventana2,
                            font = "TimesnewRoman 12")
-    infoPosMotores.place(x = 140, y = 200)
+    infoPosMotores.place(x = 140, y = 170)
 
 
     infoPosMotor_X = Label(interfazPrincipal, text = "X", bg = color_ventana2,
                            font = "TimesnewRoman 12")
-    infoPosMotor_X.place(x = 285, y = 180)
+    infoPosMotor_X.place(x = 290, y = 150)
 
 
     infoPosMotor_Y = Label(interfazPrincipal, text = "Y", bg = color_ventana2,
                            font = "TimesnewRoman 12")
-    infoPosMotor_Y.place(x = 355, y = 180)
+    infoPosMotor_Y.place(x = 350, y = 150)
 
 
     infoPosMotor_Z = Label(interfazPrincipal, text = "Z", bg = color_ventana2,
                            font = "TimesnewRoman 12")
-    infoPosMotor_Z.place(x = 425, y = 180)
+    infoPosMotor_Z.place(x = 410, y = 150)
+
+
+    infoAlmacenamiento = Label(interfazPrincipal, text = "Almacenamiento \n USB", bg = color_ventana2,
+                               font = "TimesNewRoman 12")
+    infoAlmacenamiento.place(x = 140, y = 285)
     
 
-    # Entradas motores
+    infoAlmacenamiento2 = Label(interfazPrincipal, text = ":", bg = color_ventana2,
+                               font = "TimesNewRoman 15")
+    infoAlmacenamiento2.place(x = 260, y = 290)
+
+    infoMedidasMuestra = Label(interfazPrincipal, text = "Área de medición: ", bg = color_ventana2, font = "TimesNewRoman 12")
+    infoMedidasMuestra.place(x = 140, y = 230)
+
+
+    infoMedida_X = Label(interfazPrincipal, text = "X", bg = color_ventana2,
+                           font = "TimesnewRoman 12")
+    infoMedida_X.place(x = 290, y = 210)
+
+
+    infoMedida_Y = Label(interfazPrincipal, text = "Y", bg = color_ventana2,
+                           font = "TimesnewRoman 12")
+    infoMedida_Y.place(x = 350, y = 210)
+
+
+    infoMedida_Z = Label(interfazPrincipal, text = "Z", bg = color_ventana2,
+                           font = "TimesnewRoman 12")
+    infoMedida_Z.place(x = 410, y = 210)
+
+
+    # Entradas
+    # Motores
     entradaMotor_X = Entry(interfazPrincipal, bd = 2, textvariable = motorX, width = 5)
     entradaMotor_X.insert(0, "0")
-    entradaMotor_X.place(x = 270, y = 200)
+    entradaMotor_X.place(x = 280, y = 172)
     entradaMotor_X.bind("<Return>", mov_X)
     
 
     entradaMotor_Y = Entry(interfazPrincipal, textvariable = motorY, bd = 2, width = 5)
     entradaMotor_Y.insert(0, "0")
-    entradaMotor_Y.place(x = 340, y = 200)
+    entradaMotor_Y.place(x = 340, y = 172)
     entradaMotor_Y.bind("<Return>", mov_Y)
     
 
     entradaMotor_Z = Entry(interfazPrincipal, textvariable = motorZ, bd = 2, width = 5)
     entradaMotor_Z.insert(0, "0")
-    entradaMotor_Z.place(x = 410, y = 200)
+    entradaMotor_Z.place(x = 400, y = 172)
     entradaMotor_Z.bind("<Return>", mov_Z)
+
+
+    # Medidas
+    entradaMedida_X = Entry(interfazPrincipal, bd = 2, textvariable = medida_X, width = 5)
+    entradaMedida_X.insert(0, "0")
+    entradaMedida_X.place(x = 280, y = 232)
+
+
+    entradaMedida_Y = Entry(interfazPrincipal, bd = 2, textvariable = medida_Y, width = 5)
+    entradaMedida_Y.insert(0, "0")
+    entradaMedida_Y.place(x = 340, y = 232)
+
+
+    entradaMedida_Z = Entry(interfazPrincipal, bd = 2, textvariable = medida_Z, width = 5)
+    entradaMedida_Z.insert(0, "0")
+    entradaMedida_Z.place(x = 400, y = 232)
+
 
     # Lectura de últimas coordenadas en el archivo .txt
     ultimasCoordenadas = leerCoordenadas()
@@ -353,43 +406,36 @@ def ingresar():
         x, y, z = ult_pos_x, ult_pos_y, ult_pos_z
         visualizacionUltPos()
 
+
     # Botones
     botonSalir2 = Button(interfazPrincipal, text = "Salir", 
                     command = cerrarVentana, bg = "#bb9778")
-    botonSalir2.place(x = 335, y = 400)
+    botonSalir2.place(x = 570, y = 410)
 
 
     botonPosOrigen = Button(interfazPrincipal, text = "Mover motores al origen", bg = "#e1e7eb",
                             command = reinicioPosiciones)
-    botonPosOrigen.place(x = 270, y = 240)
+    botonPosOrigen.place(x = 485, y = 168)
 
 
     botonLaserOn = Button(interfazPrincipal, text = "Encender/Apagar Láser", bg = "#e1e7eb", 
                           command = controlLaser)
-    botonLaserOn.place(x = 100, y = 400)
+    botonLaserOn.place(x = 135, y = 410)
 
 
 #     botonCaptura = Button(interfazPrincipal, text = "Tomar foto", bg = "#e1e7eb", 
 #                           command = lambda: tomarCaptura())
 #     botonCaptura.place(x = 200, y = 400)
 
+
     botonIniciarMedicion = Button(interfazPrincipal, text = "Iniciar medición", 
-                                  bg = "#e1e7eb", command = automatizacion)
+                                  bg = "#AFF3B2", command = automatizacion)
+    botonIniciarMedicion.place(x = 350, y = 360)
 
     # Menu desplegable para opciones de almacenamiento de imágenes
-    infoAlmacenamiento = Label(interfazPrincipal, text = "Almacenamiento \n USB", bg = color_ventana2,
-                               font = "TimesNewRoman 12")
-    infoAlmacenamiento.place(x = 140, y = 295)
-    
-
-    infoAlmacenamiento2 = Label(interfazPrincipal, text = ":", bg = color_ventana2,
-                               font = "TimesNewRoman 15")
-    infoAlmacenamiento2.place(x = 252, y = 300)
-
-
     menuOpciones = OptionMenu(interfazPrincipal, SeleccionMemoria, *varOpciones)
     menuOpciones.config(width = 18)
-    menuOpciones.place(x = 270, y = 300)
+    menuOpciones.place(x = 280, y = 290)
 
     
 
