@@ -283,16 +283,31 @@ def ingresar():
     def automatizacion():
         event = None
         global ult_pos_x, ult_pos_y, ult_pos_z, max_x, max_y, max_z, min_x, min_y, min_z
+        medida_X, medida_Y, medida_Z = entradaMedida_X.get(), entradaMedida_Y.get(), entradaMedida_Z.get()
+
         #for k in range(ult_pos_z, max_z):
             #entradaMotor_Z()
             #tomarCaptura()
-        for j in range(ult_pos_y, max_y):
+
+        for j in range(medida_Y):
             entradaMotor_Y()
-                #tomarCaptura()
-            for i in range(ult_pos_x, max_x):
+
+            for i in range(medida_X):
+                #pcrb.construccionImg2D()
                 entradaMotor_X.delete(0, END)
                 entradaMotor_X.insert(0, str(ult_pos_x + 1))
-                    #tomarCaptura()
+
+            entradaMotor_Y.delete(0, END)
+            entradaMotor_Y.insert(0, str(ult_pos_y + 1))
+            
+            for i in range(medida_X):
+                #pcrb.construccionImg2D()
+                entradaMotor_X.delete(0, END)
+                entradaMotor_X.insert(0, str(ult_pos_x - 1))
+
+            entradaMotor_Y.delete(0, END)
+            entradaMotor_Y.insert(0, str(ult_pos_y + 1))
+            
 
  # Prueba para adaptar
 #for i in range(5):
@@ -342,6 +357,7 @@ def ingresar():
     infoAlmacenamiento2 = Label(interfazPrincipal, text = ":", bg = color_ventana2,
                                font = "TimesNewRoman 15")
     infoAlmacenamiento2.place(x = 260, y = 290)
+
 
     infoMedidasMuestra = Label(interfazPrincipal, text = "Área de medición: ", bg = color_ventana2, font = "TimesNewRoman 12")
     infoMedidasMuestra.place(x = 140, y = 230)
@@ -438,8 +454,6 @@ def ingresar():
     menuOpciones.place(x = 280, y = 290)
 
     
-
-
 # Función que elimina el texto de las entradas nombre y apellido
 def borrar_texto(entrada):
     return lambda evento: entrada.delete(0, END)
