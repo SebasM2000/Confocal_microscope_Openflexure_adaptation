@@ -13,8 +13,8 @@ from tkinter import *
 import os
 
 # Configuración arduino
-#arduino =  serial.Serial("/dev/ttyACM0", baudrate = 9600, timeout = 1)
-#time.sleep(2)
+arduino =  serial.Serial("/dev/ttyACM0", baudrate = 9600, timeout = 1)
+time.sleep(2)
 
 # Variables globales
 root = Tk()
@@ -277,7 +277,7 @@ def ingresar():
 
     # Control Cámara
     def tomarCaptura():
-        PiCam.foto()
+        PiCam.main()
 
     # Medición automática de los motores
     def automatizacion():
@@ -444,8 +444,8 @@ def ingresar():
 
 
     botonCaptura = Button(interfazPrincipal, text = "Tomar foto", bg = "#e1e7eb", 
-                          command = tomarCaptura())
-    botonCaptura.place(x = 200, y = 400)
+                          command = tomarCaptura)
+    botonCaptura.place(x = 365, y = 410)
 
 
     botonIniciarMedicion = Button(interfazPrincipal, text = "Iniciar medición", 
