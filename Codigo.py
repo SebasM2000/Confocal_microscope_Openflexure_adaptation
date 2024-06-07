@@ -24,6 +24,7 @@ ult_pos_x, ult_pos_y, ult_pos_z = 0, 0, 0 # Última posicion
 x, y, z = None, None, None # Posición actual (empezando en un valor nulo)
 max_x, max_y, max_z = 1000000, 1000000, 100000 # Límite superior
 min_x, min_y, min_z = -max_x, -max_y, -max_z # Límite inferior
+t = 0.1 # Tiempo en segundos de descanso entre cada paso
 
 # Control láser
 laser = False
@@ -179,11 +180,13 @@ def ingresar():
             while x > ult_pos_x:
                 arduino.write(b'1')
                 ult_pos_x += 1
+                time.sleep(t)
 
             # Dirección anti-horaria X
             while x < ult_pos_x:
                 arduino.write(b'2')
                 ult_pos_x -= 1
+                time.sleep(t)
     
     # Motor en Y
     def mov_Y(event):
@@ -209,11 +212,13 @@ def ingresar():
             while y > ult_pos_y:
                 arduino.write(b'3')
                 ult_pos_y += 1
+                time.sleep(t)
             
             # Dirección anti-horaria Y
             while y < ult_pos_y:
                 arduino.write(b'4')
                 ult_pos_y -= 1
+                time.sleep(t)
     
     # Motor en Z
     def mov_Z(event):
@@ -239,11 +244,13 @@ def ingresar():
             while z > ult_pos_z:
                 arduino.write(b'5')
                 ult_pos_z += 1
+                time.sleep(t)
 
             # Dirección anti-horaria Z
             while z < ult_pos_z:
                 arduino.write(b'6')
                 ult_pos_z -= 1
+                time.sleep(t)
     
     # Regreso al origen de los motores
     def reinicioPosiciones():
