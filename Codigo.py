@@ -24,7 +24,7 @@ ult_pos_x, ult_pos_y, ult_pos_z = 0, 0, 0 # Última posicion
 x, y, z = None, None, None # Posición actual (empezando en un valor nulo)
 max_x, max_y, max_z = 1000000, 1000000, 100000 # Límite superior
 min_x, min_y, min_z = -max_x, -max_y, -max_z # Límite inferior
-t = 0.1 # Tiempo en segundos de descanso entre cada paso
+t = 0.05 # Tiempo en segundos de descanso entre cada paso
 
 # Control láser
 laser = False
@@ -206,6 +206,9 @@ def ingresar():
             # Límite máximo
             elif y > max_y:
                 y = max_y
+            
+            pasos = ult_pos_y - y
+            tiempoInicial = time.time()
 
             # Ejecuta los pasos en el archivo .ino
             # Dirección horaria Y
@@ -219,6 +222,13 @@ def ingresar():
                 arduino.write(b'4')
                 ult_pos_y -= 1
                 time.sleep(t)
+                
+            tiempoFinal = time.time()
+            tiempoEjecucion = tiempoFinal - tiempoInicial
+            velocidad_y = pasos / tiempoEjecucion
+            
+            print(f"Datos de ejecución: \n - {pasos} pasos.\
+\n - Tiempo: {tiempoEjecucion:.2f} segundos. \n - Velocidad: {velocidad_y:.2f} pasos/segundo. \n")
     
     # Motor en Z
     def mov_Z(event):
