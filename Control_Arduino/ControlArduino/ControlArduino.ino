@@ -86,7 +86,7 @@ void loop(){
    apagado(); // Evita que los motores se calienten
 }
 
-// Paso hacia la derecha motor X
+// Paso hacia la derecha motor Y
 void paso_der_Y(){
  digitalWrite(pinesMotor[0], LOW);  
  digitalWrite(pinesMotor[1], LOW); 
@@ -137,7 +137,7 @@ void paso_der_Y(){
  delay(retardo);
 }
 
-// Pasos a la izquierda motor X
+// Pasos a la izquierda motor Y
 void paso_izq_Y() {     
  digitalWrite(pinesMotor[0], HIGH);  
  digitalWrite(pinesMotor[1], LOW); 
@@ -181,10 +181,10 @@ void paso_izq_Y() {
  digitalWrite(pinesMotor[3], HIGH);  
  delay(retardo);
 
- digitalWrite(pinesMotor[0], HIGH); 
+ digitalWrite(pinesMotor[0], LOW); 
  digitalWrite(pinesMotor[1], LOW);  
  digitalWrite(pinesMotor[2], LOW);  
- digitalWrite(pinesMotor[3], LOW);  
+ digitalWrite(pinesMotor[3], HIGH);  
  delay(retardo);
 }
 
@@ -283,14 +283,14 @@ void paso_izq_Z() {
  digitalWrite(pinesMotor[7], HIGH);  
  delay(retardo);
 
- digitalWrite(pinesMotor[4], HIGH); 
+ digitalWrite(pinesMotor[4], LOW); 
  digitalWrite(pinesMotor[5], LOW);  
  digitalWrite(pinesMotor[6], LOW);  
- digitalWrite(pinesMotor[7], LOW);  
+ digitalWrite(pinesMotor[7], HIGH);  
  delay(retardo);
 }
 
-// Paso hacia la derecha motor Y
+// Paso hacia la derecha motor X
 void paso_der_X(){     
  digitalWrite(pinesMotor[8], LOW);  
  digitalWrite(pinesMotor[9], LOW); 
@@ -341,7 +341,7 @@ void paso_der_X(){
  delay(retardo);
 }
 
-// Pasos a la izquierda motor Y
+// Pasos a la izquierda motor X
 void paso_izq_X() {     
  digitalWrite(pinesMotor[8], HIGH);  
  digitalWrite(pinesMotor[9], LOW); 
@@ -385,10 +385,10 @@ void paso_izq_X() {
  digitalWrite(pinesMotor[11], HIGH);  
  delay(retardo);
 
- digitalWrite(pinesMotor[8], HIGH); 
+ digitalWrite(pinesMotor[8], LOW); 
  digitalWrite(pinesMotor[9], LOW);  
  digitalWrite(pinesMotor[10], LOW);  
- digitalWrite(pinesMotor[11], LOW);  
+ digitalWrite(pinesMotor[11], HIGH);  
  delay(retardo);
 }
 
