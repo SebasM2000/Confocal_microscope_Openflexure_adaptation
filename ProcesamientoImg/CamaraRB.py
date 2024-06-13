@@ -1,22 +1,18 @@
 # Librería
-from picamera import PiCamera
-from picamera import PiRGBArray
+import capturaCamara as cp
 import numpy as np
 import datetime as dt
 import time
 import os
-
-# Configuración de la cámara
-camara = PiCamera()
-camara.resolution(640, 480)
-camara.framerate(32)
-captura_arreglo = PiRGBArray(camara, size = (640, 480))
-
-# Tiempo de inicio de la cámara
-time.sleep(0.1)
+import psutil
 
 # Matriz que almacena la imagen del plano xy
 matriz_imagen = np.zeros((480, 640), dtype = np.uint8)
+
+# Detección dispositivos USB
+def deteccionUSB():
+    dispositivosActuales = set(partition.device for partition in psutil.disk_partitions())
+    
 
 # Construccion imagen 2D
 def construccionImg2D():
@@ -28,17 +24,12 @@ def construccionImg2D():
     return intensidadMedia
 
 # Tomar foto
-def nombreFoto(ruta):
-    marcaTiempo = int(time.time() * 1000)
-    nombreCaptura = f"Captura_{marcaTiempo}.jpg"
+def nombreImagenZ(nombreInterfaz, z):
+    zMicras = int(z * 1000) # Conversión de milímetros a micras para eliminar decimales
+    nombreCaptura = f"{nombreInterfaz}_Z{zMicras}.jpg"
     rutaCaptura = os.path.join(ruta, nombreCaptura)
-    #camara.capture(rutaCaptura)
 
 # Iniciar/Detener video
 def iniciarVideo(ruta):
     nombreVideo = os.path.join(ruta, dt.datetime.now().strfname("%Y-%m-%d_%M.%S.h264"))
     camara.start_recording(nombreVideo)
-
-def detenerVideo(t):
-    time.sleep(t)
-    camara.stop_recording()

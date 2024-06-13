@@ -6,7 +6,7 @@ Created on Sat Jun  3 14:17:52 2023
 """
 # Librerías
 #import ProcesamientoImg.CamaraRB as pcrb
-import Pruebas.capturaCamara as PiCam
+import ProcesamientoImg.capturaCamara as PiCam
 import serial
 import time
 from tkinter import *
