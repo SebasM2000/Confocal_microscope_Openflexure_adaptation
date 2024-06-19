@@ -1,5 +1,5 @@
 # Librería
-import capturaCamara as cp
+import capturaCamara as cc
 import numpy as np
 import datetime as dt
 import time
