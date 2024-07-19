@@ -3,20 +3,114 @@ import serial
 import time 
 
 
+# Variables globales
+ultima_posicion_x, ult_posicion_y, ult_posicion_z = 0, 0, 0  # Última posicion
+max_x, max_y, max_z = 5000, 5000, 5000                       # Límite superior
+t = 0.05                                                     # Tiempo en segundos de descanso entre cada paso
+
+
+# Datos usuario
+def almacenar_datos_usuario(nombre, apellido, correo):
+    datos_usuario = {}
+    datos_usuario['nombre'] = nombre
+    datos_usuario['apellido'] = apellido
+    datos_usuario['correo'] = correo
+
+    # Guardar datos del usuario en archivo .txt
+    with open("datosUsuario.txt", "w") as file:
+        file.write(datos_usuario)
+
+
+def deteccion_arduino():
+    # Detección arduino
+    puertos = serial.tools.list_ports_comports()
+    for puerto in puertos:
+        if 'Arduino' in puerto.description:
+            # Configuración arduino
+            arduino =  serial.Serial(puerto.device, baudrate = 9600, timeout = 1)
+            time.sleep(2)
+            return arduino, puerto.device
+        
+    return None
+
+
+# Coordenadas motores
+def almacenar_coordenadas(x, y, z):
+    with open("coordenadas.txt", "w") as file:
+        file.write(f"{x}, {y}, {z}")
+
+def lectura_ultimas_coordenadas():
+    try:
+        with open("coordenadas.txt", "r") as file:
+            line = file.readline()
+
+            if line:
+                return tuple(map(int, line.split(',')))
+                    
+    except FileNotFoundError:
+        return None
+    
 # Movimiento motores
-ult_pos_x, ult_pos_y, ult_pos_z = 0, 0, 0      # Última posicion
-x, y, z = None, None, None                     # Posición actual (empezando en un valor nulo)
-max_x, max_y, max_z = 5000, 5000, 5000         # Límite superior
-min_x, min_y, min_z = -max_x, -max_y, -max_z   # Límite inferior
-t = 0.05                                       # Tiempo en segundos de descanso entre cada paso
+def movimiento_motores(arduino, x_i, y_i, z_i, x_f, y_f, z_f):
+    global max_x, max_y, max_z
+
+    # Límites de movimiento
+    if x_i < -max_x:
+        x_i = -max_x
+
+    elif x_i > max_x:
+        x_i = max_x
+
+    if y_i < -max_y:
+        y_i = -max_y
+
+    elif y_i > max_y:
+        y_i = max_y
+
+    if z_i < -max_z:
+        z_i = -max_z
+
+    elif z_i > max_z:
+        z_i = max_z
+            
+
+    # Ejecuta los pasos en el archivo .ino
+    # Dirección horaria X
+    while x_i > x_f:
+        arduino.write(b'1')
+        x_f += 1
+        time.sleep(t)
+
+    # Dirección anti-horaria X
+    while x_i < x_f:
+        arduino.write(b'2')
+        x_f -= 1
+        time.sleep(t)
+
+    # Dirección horaria Y
+    while y_i > y_f:
+        arduino.write(b'3')
+        y_f += 1
+        time.sleep(t)
+            
+    # Dirección anti-horaria Y
+    while y_i < y_f:
+        arduino.write(b'4')
+        y_f -= 1
+        time.sleep(t)
 
 
-class ControlMaster:
+    # Dirección horaria Z
+    while z_i > z_f:
+        arduino.write(b'5')
+        z_f += 1
+        time.sleep(t)
+            
+    # Dirección anti-horaria Z
+    while z_i < z_f:
+        arduino.write(b'6')
+        z_f -= 1
+        time.sleep(t)
 
-    def __init__(self, dispositivo_maestro):
-        self.dispositivo_maestro = dispositivo_maestro
-
-    # Configuración arduino
-        self.master =  serial.Serial("/dev/ttyACM0"dispositivo_maestro, baudrate = 9600, timeout = 1)
-        time.sleep(2)
+def estado_laser(laser):
 

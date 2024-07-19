@@ -4,39 +4,40 @@ from tkinter import PhotoImage
 import os
 from VentanaPrincipal import VentanaControlMicroscopio
 
-
 # Colores
 color_base = "#72cae2"
 color_letra = "#000000"
 color_entrada = "#ffffff"
 
 
-class VentanaBienvenida:
+class VentanaRegistro(tk.Tk):
 
-    def __init__(self, master):
-        self.master = master
+    def __init__(self, abrir_ventana_principal):
+        super().__init__()
+        self.abrir_ventana_principal = abrir_ventana_principal
 
         self.visibilidadBoton = tk.BooleanVar()
         self.visibilidadBoton.set(True)
 
+
         # Configuración ventana de bienvenida
-        self.master.title("Reconocimiento de usuario")
-        self.master.geometry("750x500")
+        self.title("Reconocimiento de usuario")
+        self.geometry("750x500")
 
         # ícono ventana
         self.ruta_abs_img = os.path.dirname(__file__)
         self.imagen_icono = os.path.join(self.ruta_abs_img, "icono", "taylorm.png")
         self.imagen = PhotoImage(file = self.imagen_icono)
-        self.master.iconphoto(True, self.imagen)
-        self.master.resizable(0, 0)
-        self.master.config(bg = color_base, cursor = "dot")
+        self.iconphoto(True, self.imagen)
+        self.resizable(0, 0)
+        self.config(bg = color_base, cursor = "dot")
 
         #-----------------------------------------------------#
         #               Etiquetas y entradas                  #
         #-----------------------------------------------------#
 
         # Titulo
-        self.mensaje_bienvenida = tk.Label(self.master, text = "¡Bienvenido al laboratorio de Acusto-óptica\n y Radiometría!", 
+        self.mensaje_bienvenida = tk.Label(self, text = "¡Bienvenido al laboratorio de Acusto-óptica\n y Radiometría!", 
                         bd = 14, bg = color_base, 
                         fg = color_letra, font = "TimesNewRoman 23 italic")
         self.mensaje_bienvenida.place(x = 100, y = 50)
@@ -44,31 +45,31 @@ class VentanaBienvenida:
         # Nombres, apellidos y correo
 
         # Nombre
-        self.info_nombre = tk.Label(self.master, text = "Nombre(s): ", bg = color_base,
+        self.info_nombre = tk.Label(self, text = "Nombre(s): ", bg = color_base,
                           font = "TimesNewRoman 13", fg = color_letra)
         self.info_nombre.place(x = 180, y = 200)
 
-        self.entrada_nombre = tk.Entry(self.master, bd = 1, bg = color_entrada, width = 30, textvariable = self.registroUsuario)
+        self.entrada_nombre = tk.Entry(self, bd = 1, bg = color_entrada, width = 30)
         self.entrada_nombre.insert(0, "Investigador")
         self.entrada_nombre.place(x = 275, y = 202)
 
 
         # Apellido
-        self.info_apellido = tk.Label(self.master, text = "Apellido(s):", bg = color_base,
+        self.info_apellido = tk.Label(self, text = "Apellido(s):", bg = color_base,
                           font = "TimesNewRoman 13", fg = color_letra)
         self.info_apellido.place(x = 180, y = 240)
 
-        self.entrada_apellido = tk.Entry(self.master, bd = 1, bg = color_entrada, width = 30, textvariable = self.registroUsuario)
+        self.entrada_apellido = tk.Entry(self, bd = 1, bg = color_entrada, width = 30)
         self.entrada_apellido.insert(0, "Anónimo")
         self.entrada_apellido.place(x = 275, y = 242)
 
 
         # Correo
-        self.info_correo = tk.Label(self.master, text = "Correo:", bg = color_base,
+        self.info_correo = tk.Label(self, text = "Correo:", bg = color_base,
                            font = "TimesNewRoman 13", fg = color_letra)
         self.info_correo.place(x = 180, y = 280)
 
-        self.entrada_correo = tk.Entry(self.master, bd = 1, bg = color_entrada, width = 30, textvariable = self.registroUsuario)
+        self.entrada_correo = tk.Entry(self, bd = 1, bg = color_entrada, width = 30)
         self.entrada_correo.insert(0, "Escriba aquí su correo")
         self.entrada_correo.place(x = 275, y = 282)
 
@@ -77,40 +78,41 @@ class VentanaBienvenida:
 
 
         # Botones
-        self.boton_salir = tk.Button(self.master, text = "Salir", 
-                            command = self.master.destroy, bg = "#bb9778")
+        self.boton_salir = tk.Button(self, text = "Salir", 
+                            command = self.destroy, bg = "#bb9778")
         self.boton_salir.place(x = 610, y = 420)
 
 
-        self.boton_usuario_frecuente = tk.Button(self.master, text = "Usuario frecuente", 
+        self.boton_usuario_frecuente = tk.Button(self, text = "Usuario frecuente", 
                                        bg = "#c4c4c4", state = "normal",
                                        command = self.usuarioFrecuente)
         self.boton_usuario_frecuente.place(x = 325, y = 375)
 
 
-        self.boton_ingresar = tk.Button(self.master, text = "Ingresar", bg = "#c4c4c4",
-                            command = self.registroUsuario)
+        self.boton_ingresar = tk.Button(self, text = "Ingresar", bg = "#c4c4c4",
+                            command = self.confirmacionDatos)
         self.boton_ingresar.place(x = 355, y = 330)
 
 
-        self.boton_atras = tk.Button(self.master, text = "Atrás", command = self.usuarioFrecuente, bg = "#3a85f7")
+        self.boton_atras = tk.Button(self, text = "Atrás", command = self.usuarioFrecuente, bg = "#3a85f7")
 
 
-        self.info_no_usuario_frecuente = tk.Label(self.master, text = "Actualmente no hay ningún\n usuario frecuente", bd = 14, bg = color_base, 
-                         fg = color_letra, font = "TimesNewRoman 23")
+        self.info_no_usuario_frecuente = tk.Label(self, text = "Actualmente no hay ningún\n usuario frecuente", bd = 14, bg = color_base, fg = color_letra, font = "TimesNewRoman 23")
+        
         
     # Función que elimina el texto de las entradas nombre y apellido
     def borrarTextoEntradas(self):
 
         # Definición de funciones lambda para eliminar texto
-        self.borrar_texto_nombre = lambda evento: self.entrada_nombre.delete(0, tk.END)
-        self.borrar_texto_apellido = lambda evento: self.entrada_apellido.delete(0, tk.END)
-        self.borrar_texto_correo = lambda evento: self.entrada_correo.delete(0, tk.END)
+        self.borrar_texto_nombre = lambda event: self.entrada_nombre.delete(0, tk.END)
+        self.borrar_texto_apellido = lambda event: self.entrada_apellido.delete(0, tk.END)
+        self.borrar_texto_correo = lambda event: self.entrada_correo.delete(0, tk.END)
 
         # Asociación de evento con las entradas correspondientes
         self.entrada_nombre.bind("<Button-1>", self.borrar_texto_nombre)
-        self.entrada_nombre.bind("<Button-1>", self.borrar_texto_apellido)
-        self.entrada_nombre.bind("<Button-1>", self.borrar_texto_correo)
+        self.entrada_apellido.bind("<Button-1>", self.borrar_texto_apellido)
+        self.entrada_correo.bind("<Button-1>", self.borrar_texto_correo)
+
 
     # Función que traslada a una nueva pantalla al hacer click en "Usuario frecuente"
     def usuarioFrecuente(self):
@@ -143,21 +145,39 @@ class VentanaBienvenida:
             self.info_no_usuario_frecuente.place_forget()
             self.visibilidadBoton.set(True)
 
-    # Función de registro de usuario
-    def registroUsuario(self):
-        self.nombre = self.entrada_nombre.get().strip()
-        self.apellido = self.entrada_apellido.get().strip()
-        self.correo = self.entrada_correo.get().strip()
-        
-        self.master.destroy()
 
-        self.ventana_principal = tk.Tk()
-        VentanaControlMicroscopio(self.ventana_principal, self.nombre, self.apellido, self.correo)
-        self.ventana_principal.mainloop()
+    # Validación de los datos
+    def confirmacionDatos(self):
+            nombre = self.entrada_nombre.get().strip()
+            apellido = self.entrada_apellido.get().strip()
+            correo = self.entrada_correo.get().strip()
 
+            if nombre == "Investigador" or nombre == "":
+                self.Advertencia()
+
+            elif apellido == "Anónimo" or apellido == "":
+                self.Advertencia()
+
+            elif correo == "Escriba aquí su correo" or correo == "":
+                self.Advertencia()
+
+            else:
+                self.destroy()
+                self.abrir_ventana_principal(nombre, apellido, correo)
+
+
+    def Advertencia(self):
+        self.mensajeAdvertencia = tk.Label(self, text = "Datos inválidos. Por favor completar todos los campos",
+                                            font = "TimesNewRoman 12 italic", bg = color_base, fg = "red")
+        self.mensajeAdvertencia.place(x = 210, y = 150)
         
 
 if __name__ == "__main__":
-    root = tk.Tk()
-    ventana_bienvenida = VentanaBienvenida(root)
-    root.mainloop()
+    def abrir_ventana_registro(nombre, apellido, correo):
+
+        # Guardar datos del usuario en archivo .txt
+        with open("datosUsuario.txt", "w") as file:
+            file.write(f"{nombre},{apellido},{correo}")
+
+    ventana_bienvenida = VentanaRegistro(abrir_ventana_registro)
+    ventana_bienvenida.mainloop()
