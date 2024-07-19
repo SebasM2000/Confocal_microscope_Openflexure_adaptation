@@ -26,7 +26,7 @@ class VentanaRegistro(tk.Tk):
 
         # ícono ventana
         self.ruta_abs_img = os.path.dirname(__file__)
-        self.imagen_icono = os.path.join(self.ruta_abs_img, "icono", "taylorm.png")
+        self.imagen_icono = os.path.join(self.ruta_abs_img, "icono", "logo.png")
         self.imagen = PhotoImage(file = self.imagen_icono)
         self.iconphoto(True, self.imagen)
         self.resizable(0, 0)
