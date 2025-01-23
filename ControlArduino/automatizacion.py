@@ -7,7 +7,10 @@ import time
 ultima_posicion_x, ult_posicion_y, ult_posicion_z = 0, 0, 0  # Última posicion
 max_x, max_y, max_z = 5000, 5000, 5000                       # Límite superior
 t = 0.05                                                     # Tiempo en segundos de descanso entre cada paso
+laser = None
 
+def saludo():
+    print("Hola")
 
 # Datos usuario
 def almacenar_datos_usuario(nombre, apellido, correo):
@@ -20,16 +23,15 @@ def almacenar_datos_usuario(nombre, apellido, correo):
     with open("datosUsuario.txt", "w") as file:
         file.write(datos_usuario)
 
-
+# Arduino
 def deteccion_arduino():
-    # Detección arduino
     puertos = serial.tools.list_ports_comports()
     for puerto in puertos:
         if 'Arduino' in puerto.description:
             # Configuración arduino
             arduino =  serial.Serial(puerto.device, baudrate = 9600, timeout = 1)
             time.sleep(2)
-            return arduino, puerto.device
+            return arduino
         
     return None
 
@@ -49,6 +51,7 @@ def lectura_ultimas_coordenadas():
                     
     except FileNotFoundError:
         return None
+    
     
 # Movimiento motores
 def movimiento_motores(arduino, x_i, y_i, z_i, x_f, y_f, z_f):
@@ -112,5 +115,14 @@ def movimiento_motores(arduino, x_i, y_i, z_i, x_f, y_f, z_f):
         z_f -= 1
         time.sleep(t)
 
-def estado_laser(laser):
 
+# Control del láser
+def estado_laser(arduino):
+    global laser
+
+    if (laser == False) | (laser == None):
+        laser = True
+        arduino.write(b'7')
+    else:
+        laser = False
+        arduino.write(b'8')

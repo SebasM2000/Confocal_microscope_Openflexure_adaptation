@@ -2,7 +2,7 @@
 import tkinter as tk
 from tkinter import PhotoImage
 import os
-from VentanaPrincipal import VentanaControlMicroscopio
+#from VentanaPrincipal import VentanaControlMicroscopio
 
 # Colores
 color_base = "#72cae2"
@@ -21,7 +21,7 @@ class VentanaRegistro(tk.Tk):
 
 
         # Configuración ventana de bienvenida
-        self.title("Reconocimiento de usuario")
+        self.title("Ventana de Bienvenida")
         self.geometry("750x500")
 
         # ícono ventana
