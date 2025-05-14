@@ -2,7 +2,7 @@
 import tkinter as tk
 from tkinter import PhotoImage
 import os
-#from VentanaPrincipal import VentanaControlMicroscopio
+from VentanaPrincipal import VentanaControlMicroscopio
 
 # Colores
 color_base = "#72cae2"
@@ -97,7 +97,8 @@ class VentanaRegistro(tk.Tk):
         self.boton_atras = tk.Button(self, text = "Atrás", command = self.usuarioFrecuente, bg = "#3a85f7")
 
 
-        self.info_no_usuario_frecuente = tk.Label(self, text = "Actualmente no hay ningún\n usuario frecuente", bd = 14, bg = color_base, fg = color_letra, font = "TimesNewRoman 23")
+        self.info_no_usuario_frecuente = tk.Label(self, text = "Actualmente no hay ningún\n usuario frecuente", 
+                                                  bd = 14, bg = color_base, fg = color_letra, font = "TimesNewRoman 23")
         
         
     # Función que elimina el texto de las entradas nombre y apellido
@@ -178,6 +179,9 @@ if __name__ == "__main__":
         # Guardar datos del usuario en archivo .txt
         with open("datosUsuario.txt", "w") as file:
             file.write(f"{nombre},{apellido},{correo}")
+
+        ventana_principal = VentanaControlMicroscopio(nombre)
+        ventana_principal.mainloop()
 
     ventana_bienvenida = VentanaRegistro(abrir_ventana_registro)
     ventana_bienvenida.mainloop()

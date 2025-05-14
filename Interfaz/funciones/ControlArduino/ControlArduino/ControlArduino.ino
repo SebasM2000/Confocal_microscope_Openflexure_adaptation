@@ -48,6 +48,8 @@ void loop(){
    if (Serial.available() > 0){ // Lee el valor enviado por el puerto serial
      char c = Serial.read(); // Lee el valor
      ultimoCaracter = c;
+     Serial.print("Recibido:"); 
+     Serial.println(c);
      
      // Control Motor X
      if (c == '1'){
@@ -72,7 +74,13 @@ void loop(){
      if (c == '6'){
       paso_der_Z();
      }
-   }
+
+     // Limpia el buffer serial
+    while (Serial.available() > 0) {
+        Serial.read();
+
+    delay(100);
+   }}
 
      // Control láser
    if (ultimoCaracter == '7'){

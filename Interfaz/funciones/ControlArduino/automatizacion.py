@@ -1,39 +1,42 @@
 # Librerías control arduino
 import serial
-import time 
+import time
+#import ProcesamientoImg.capturaCamara
 
 
 # Variables globales
 ultima_posicion_x, ult_posicion_y, ult_posicion_z = 0, 0, 0  # Última posicion
 max_x, max_y, max_z = 5000, 5000, 5000                       # Límite superior
 t = 0.05                                                     # Tiempo en segundos de descanso entre cada paso
-laser = None
+arduino = None
 
-def saludo():
-    print("Hola")
 
 # Datos usuario
 def almacenar_datos_usuario(nombre, apellido, correo):
-    datos_usuario = {}
-    datos_usuario['nombre'] = nombre
-    datos_usuario['apellido'] = apellido
-    datos_usuario['correo'] = correo
+    datos_usuario = []
+    datos_usuario.append(nombre)
+    datos_usuario.append(apellido)
+    datos_usuario.append(correo)
 
     # Guardar datos del usuario en archivo .txt
     with open("datosUsuario.txt", "w") as file:
-        file.write(datos_usuario)
+        file.write(" ".join(datos_usuario))
+
 
 # Arduino
 def deteccion_arduino():
-    puertos = serial.tools.list_ports_comports()
-    for puerto in puertos:
-        if 'Arduino' in puerto.description:
-            # Configuración arduino
-            arduino =  serial.Serial(puerto.device, baudrate = 9600, timeout = 1)
-            time.sleep(2)
-            return arduino
+    #puertos = serial.tools.list_ports.comports()
+    #for puerto in puertos:
+    #    print(puerto.device, puerto.description, puerto.manufacturer, puerto.product)
+    #    if 'Arduino' in puerto.description:
+    #        # Configuración arduino
+    #        arduino =  serial.Serial(puerto.device, baudrate = 9600, timeout = 1)
+    #        time.sleep(2)
+    #        return arduino
         
-    return None
+    #return None
+    serie = serial.Serial("COM3", baudrate = 9600, timeout = 1)
+    return serie
 
 
 # Coordenadas motores
@@ -44,18 +47,31 @@ def almacenar_coordenadas(x, y, z):
 def lectura_ultimas_coordenadas():
     try:
         with open("coordenadas.txt", "r") as file:
-            line = file.readline()
+            ultimas_coordenadas = file.read().split(",")
 
-            if line:
-                return tuple(map(int, line.split(',')))
+            if ultimas_coordenadas:
+                return ultimas_coordenadas
                     
     except FileNotFoundError:
         return None
     
     
 # Movimiento motores
-def movimiento_motores(arduino, x_i, y_i, z_i, x_f, y_f, z_f):
-    global max_x, max_y, max_z
+def movimiento_motores(x_i, y_i, z_i, x_f, y_f, z_f):
+    global max_x, max_y, max_z, arduino
+
+    if not arduino:
+        arduino = deteccion_arduino()
+
+    if x_i == None:
+        x_i = 0
+
+    elif y_i == None:
+        y_i = 0
+
+    elif z_i == None:
+        z_i = 0
+
 
     # Límites de movimiento
     if x_i < -max_x:
@@ -102,7 +118,6 @@ def movimiento_motores(arduino, x_i, y_i, z_i, x_f, y_f, z_f):
         y_f -= 1
         time.sleep(t)
 
-
     # Dirección horaria Z
     while z_i > z_f:
         arduino.write(b'5')
@@ -117,12 +132,45 @@ def movimiento_motores(arduino, x_i, y_i, z_i, x_f, y_f, z_f):
 
 
 # Control del láser
-def estado_laser(arduino):
-    global laser
+def estado_laser(laser):
+    global arduino
+
+    if not arduino:
+        arduino = deteccion_arduino()
 
     if (laser == False) | (laser == None):
-        laser = True
         arduino.write(b'7')
+        print("Láser encendido.")
     else:
-        laser = False
         arduino.write(b'8')
+        print("Láser apagado.")
+
+
+def medicion_automatica(x, y, z, dim_x, dim_y, dim_z):
+    contador = 0
+
+    x_i = x
+    y_i = y
+
+    print(f"Dimensiones registradas: {dim_x} * {dim_y} * {dim_z}")
+    for k in range(dim_z):
+        y = y_i
+        for j in range(dim_y):
+            x = x_i
+            for i in range(dim_x):
+                print(f"Foto tomada en: x = {x}, y = {y}, z = {z}")
+                contador += 1
+                x += 1
+
+            y += 1
+
+        z += 1
+
+    print(f"Mediciones realizadas: {contador}")
+
+
+def cerrar_arduino():
+    global arduino
+
+    if arduino:
+        arduino.close()
