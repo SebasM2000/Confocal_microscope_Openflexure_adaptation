@@ -1,13 +1,14 @@
 # Librerías control arduino
 import serial
 import time
+import os
 #import ProcesamientoImg.capturaCamara
 
 
 # Variables globales
 ultima_posicion_x, ult_posicion_y, ult_posicion_z = 0, 0, 0  # Última posicion
 max_x, max_y, max_z = 5000, 5000, 5000                       # Límite superior
-t = 0.05                                                     # Tiempo en segundos de descanso entre cada paso
+t = 0.1                                                     # Tiempo en segundos de descanso entre cada paso
 arduino = None
 
 
@@ -35,7 +36,7 @@ def deteccion_arduino():
     #        return arduino
         
     #return None
-    serie = serial.Serial("COM3", baudrate = 9600, timeout = 1)
+    serie = serial.Serial("/dev/ttyACM0", baudrate = 9600, timeout = 1)
     return serie
 
 
@@ -46,6 +47,7 @@ def almacenar_coordenadas(x, y, z):
 
 def lectura_ultimas_coordenadas():
     try:
+        print("Buscando archivo en: ", os.path.abspath("coordenadas.txt"))
         with open("coordenadas.txt", "r") as file:
             ultimas_coordenadas = file.read().split(",")
 
@@ -53,6 +55,7 @@ def lectura_ultimas_coordenadas():
                 return ultimas_coordenadas
                     
     except FileNotFoundError:
+        print("Archivo no encontrado")
         return None
     
     

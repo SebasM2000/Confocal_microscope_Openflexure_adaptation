@@ -150,6 +150,7 @@ class VentanaControlMicroscopio(tk.Tk):
 
         # Lectura de últimas coordenadas en el archivo .txt
         ultimas_coordenadas = auto.lectura_ultimas_coordenadas()
+        print(ultimas_coordenadas)
 
         motor_xi = ultimas_coordenadas[0]
         motor_yi = ultimas_coordenadas[1]
