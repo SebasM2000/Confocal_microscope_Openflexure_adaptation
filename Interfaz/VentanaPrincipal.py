@@ -4,6 +4,8 @@ from tkinter import filedialog
 import funciones.ControlArduino.automatizacion as auto
 import time
 
+print("Ejecutando...")
+
 # variables globales
 color_ventana_principal = "#b2e1fa"
 color_frame = "#4d2db3"
@@ -273,7 +275,11 @@ class VentanaControlMicroscopio(tk.Tk):
         global laser
 
         try:
-            ruta_carpeta.upper()
+            # Verificar que se seleccionó la carpeta
+            if not ruta_carpeta:
+                self.mostrar_error("Por favor seleccione una carpeta destino primero")
+                return
+            
 
             dim_x = self.entrada_med_x.get()
             dim_y = self.entrada_med_y.get()
@@ -284,13 +290,13 @@ class VentanaControlMicroscopio(tk.Tk):
             motor_zi = self.entrada_motor_z.get()
 
             if (int(dim_x) == 0) or (int(dim_y) == 0) or (int(dim_z) == 0):
-                self.etiqueta_carpeta = tk.Label(self, text = "Las dimensiones de la muestra no pueden ser cero", 
-                                             font = fuente + "10", bg = color_ventana_principal)
-                self.etiqueta_carpeta.place(x = 270, y = 320)
+                self.mostrar_error("Las dimensiones no pueden ser cero")
             else:
-                if laser == True:
+                if laser:
+                    auto.estado_laser(False)
                     laser = False
-                    #self.estado_laser()
+
+                # Inicia planificador de capturas
                 auto.medicion_automatica(int(motor_xi), int(motor_yi), int(motor_zi), int(dim_x), int(dim_y), int(dim_z))
             
         except AttributeError:
