@@ -8,420 +8,153 @@
  *  para trasladarlo posteriormente a Python.
 ***/
 
+// Constantes para ejes
+#define EJE_X 0
+#define EJE_Y 1
+#define EJE_Z 2
+
 int retardo = 5; // Tiempo de retardo en milisegundos
 int pos_origen = 0; // Valor en grados donde se encuentra el motor
+const int laserPin = A0; // Pin laser
+
+// Pines motores
 int pinesMotor[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
-const int laserPin = A0;
 char ultimoCaracter = '0';
 
-// Variables de la info recibida en Python
-int pasos_X = 0; 
-int pasos_Y = 0; 
-int pasos_Z = 0; 
+// Variables de posición global
+int pos_x = 0, pos_y = 0, pos_z = 0; 
 
 void setup(){
-Serial.begin(9600); // Establecer velocidad de transmision de datos a 9600 baudios
+Serial.begin(115200); // Velocidad de transmision de datos
 
-// Motor en Y
-pinMode(2, OUTPUT);
-pinMode(3, OUTPUT);
-pinMode(4, OUTPUT);
-pinMode(5, OUTPUT);
-
-// Motor en Z
-pinMode(6, OUTPUT);
-pinMode(7, OUTPUT);
-pinMode(8, OUTPUT);
-pinMode(9, OUTPUT);
-
-// Motor en X
-pinMode(10, OUTPUT);
-pinMode(11, OUTPUT);
-pinMode(12, OUTPUT);
-pinMode(13, OUTPUT);
+// Configura pines de motores
+for(int i = 0; i < 12; i++) {
+  pinMode(pinesMotor[i], OUTPUT);
+}
 
 // Láser para Arduino
 pinMode(laserPin, OUTPUT);
+digitalWrite(laserPin, LOW);
+
+Serial.println("ARDUINO_READY"); // Mensaje de inicialización
 }
 
 void loop(){
-   if (Serial.available() > 0){ // Lee el valor enviado por el puerto serial
-     char c = Serial.read(); // Lee el valor
-     ultimoCaracter = c;
-     Serial.print("Recibido:"); 
-     Serial.println(c);
-     
-     // Control Motor X
-     if (c == '1'){
-      paso_izq_X();
-     }
-     if (c == '2'){
-      paso_der_X();
-     }
+  if (Serial.available() > 0){ // Revisa información disponible en el puerto serial
+   String coordenadas = Serial.readStringUntil("\n");
+   ejecucionCoordenadas(coordenadas);
+  }
+  apagado(); // Evita calentamiento
+}
 
-     // Control Motor Y
-     if (c == '3'){
-      paso_izq_Y();
-     }
-     if (c == '4'){
-      paso_der_Y();
-     }
+void ejecucionCoordenadas(String cmd) {
+  cmd.trim(); // Remueve espacios 
 
-     // Control Motor Z
-     if (c == '5'){
-      paso_izq_Z();
-     }
-     if (c == '6'){
-      paso_der_Z();
-     }
+  if (cmd.startsWith("M")){
+    cmd = cmd.substring(1); // Remueve la "M"
 
-     // Limpia el buffer serial
-    while (Serial.available() > 0) {
-        Serial.read();
+    // Ubica que haya dos comas para tener el formato correcto (x, y, z)
+    int coma1 = cmd.indexOf(",");
+    int coma2 = cmd.indexOf(",", coma1 + 1);
 
-    delay(100);
-   }}
+    // verifica que se cumpla la condición anterior
+    if (coma1 != -1 && coma2 != -1) {
+      int pasos_x = cmd.substring(0, coma1).toInt();
+      int pasos_y = cmd.substring(coma1 + 1, coma2).toInt();
+      int pasos_z = cmd.substring(coma2 + 1).toInt();
 
-     // Control láser
-   if (ultimoCaracter == '7'){
-    laser_on();
+      // Ejecuta movimiento
+      moverMotor(EJE_X, pasos_x);
+      moverMotor(EJE_Y, pasos_y);
+      moverMotor(EJE_Z, pasos_z);
+
+      Serial.println("OK"); // Confirmación
     }
-   if (ultimoCaracter == '8'){
-    laser_off();
+  }
+
+  // Controlador Láser
+  else if (cmd == "LASER_ON") {
+    digitalWrite(laserPin, HIGH);
+    Serial.println("LASER_ON_OK");
+  }
+  else if (cmd == "LASER_OFF") {
+    digitalWrite(laserPin, LOW);
+    Serial.println("LASER_OFF_OK");
+  }
+
+  // Comando de posición: "GET_POS"
+  else if (cmd == "GET_POS") {
+    Serial.print("POS: ");
+    Serial.print(pos_x);
+    Serial.print(",");
+    Serial.print(pos_y);
+    Serial.print(",");
+    Serial.print(pos_z);
+  }
+}
+
+// Función que mueve los motores
+void moverMotor(int eje, int pasos) {
+  if (pasos == 0) return;
+
+  int direccion = (pasos > 0) ? 1 : -1;
+  int pasos_abs = abs(pasos);
+  int pin_inicio, pin_final;
+
+  // Define pines según eje
+  switch (eje) {
+    case EJE_X: pin_inicio = 8; pin_final = 11; break;
+    case EJE_Y: pin_inicio = 0; pin_final = 3; break;
+    case EJE_Z: pin_inicio = 4; pin_final = 7; break;
+    default: return;
+  }
+
+  // Ejecuta los pasos
+  for (int i = 0; i < pasos_abs; i++) {
+    if (direccion > 0) {
+      paso_derecha(pin_inicio, pin_final);
+    } else {
+      paso_izquierda(pin_inicio, pin_final);
     }
-    
 
-   apagado(); // Evita que los motores se calienten
+    // Actualiza posición
+    switch (eje) {
+      case EJE_X: pos_x += direccion; break;
+      case EJE_Y: pos_y += direccion; break;
+      case EJE_Z: pos_z += direccion; break;
+    }
+  }
 }
 
-// Paso hacia la derecha motor Y
-void paso_der_Y(){
- digitalWrite(pinesMotor[0], LOW);  
- digitalWrite(pinesMotor[1], LOW); 
- digitalWrite(pinesMotor[2], LOW);  
- digitalWrite(pinesMotor[3], HIGH);  
- delay(retardo); 
-   
- digitalWrite(pinesMotor[0], LOW); 
- digitalWrite(pinesMotor[1], LOW);  
- digitalWrite(pinesMotor[2], HIGH);  
- digitalWrite(pinesMotor[3], HIGH);  
- delay(retardo); 
-   
- digitalWrite(pinesMotor[0], LOW); 
- digitalWrite(pinesMotor[1], LOW);  
- digitalWrite(pinesMotor[2], HIGH);  
- digitalWrite(pinesMotor[3], LOW);  
- delay(retardo); 
-  
- digitalWrite(pinesMotor[0], LOW); 
- digitalWrite(pinesMotor[1], HIGH);  
- digitalWrite(pinesMotor[2], HIGH);  
- digitalWrite(pinesMotor[3], LOW);  
- delay(retardo);  
+// Funciones para movimiento de motores
+void paso_derecha(int pin_inicio, int pin_final) {
+  byte secuencia[8] = {
+    B0001, B0011, B0010, B0110, B0100, B1100, B1000, B1001
+  };
 
- digitalWrite(pinesMotor[0], LOW); 
- digitalWrite(pinesMotor[1], HIGH);  
- digitalWrite(pinesMotor[2], LOW);  
- digitalWrite(pinesMotor[3], LOW);  
- delay(retardo);
-
- digitalWrite(pinesMotor[0], HIGH); 
- digitalWrite(pinesMotor[1], HIGH);  
- digitalWrite(pinesMotor[2], LOW);  
- digitalWrite(pinesMotor[3], LOW);  
- delay(retardo);
-
- digitalWrite(pinesMotor[0], HIGH); 
- digitalWrite(pinesMotor[1], LOW);  
- digitalWrite(pinesMotor[2], LOW);  
- digitalWrite(pinesMotor[3], LOW);  
- delay(retardo);
-
- digitalWrite(pinesMotor[0], HIGH); 
- digitalWrite(pinesMotor[1], LOW);  
- digitalWrite(pinesMotor[2], LOW);  
- digitalWrite(pinesMotor[3], HIGH);  
- delay(retardo);
+  ejecutar_secuencia(pin_inicio, pin_final, secuencia);
 }
 
-// Pasos a la izquierda motor Y
-void paso_izq_Y() {     
- digitalWrite(pinesMotor[0], HIGH);  
- digitalWrite(pinesMotor[1], LOW); 
- digitalWrite(pinesMotor[2], LOW);  
- digitalWrite(pinesMotor[3], HIGH);  
- delay(retardo); 
-   
- digitalWrite(pinesMotor[0], HIGH); 
- digitalWrite(pinesMotor[1], LOW);  
- digitalWrite(pinesMotor[2], LOW);  
- digitalWrite(pinesMotor[3], LOW);  
- delay(retardo); 
-   
- digitalWrite(pinesMotor[0], HIGH); 
- digitalWrite(pinesMotor[1], HIGH);  
- digitalWrite(pinesMotor[2], LOW);  
- digitalWrite(pinesMotor[3], LOW);  
- delay(retardo); 
-  
- digitalWrite(pinesMotor[0], LOW); 
- digitalWrite(pinesMotor[1], HIGH);  
- digitalWrite(pinesMotor[2], LOW);  
- digitalWrite(pinesMotor[3], LOW);  
- delay(retardo);  
+void paso_izquierda(int pin_inicio, int pin_final) {
+  byte secuencia[8] = {
+    B1001, B1000, B1100, B0100, B0110, B0010, B0011, B0001
+  };
 
- digitalWrite(pinesMotor[0], LOW); 
- digitalWrite(pinesMotor[1], HIGH);  
- digitalWrite(pinesMotor[2], HIGH);  
- digitalWrite(pinesMotor[3], LOW);  
- delay(retardo);
-
- digitalWrite(pinesMotor[0], LOW); 
- digitalWrite(pinesMotor[1], LOW);  
- digitalWrite(pinesMotor[2], HIGH);  
- digitalWrite(pinesMotor[3], LOW);  
- delay(retardo);
-
- digitalWrite(pinesMotor[0], LOW); 
- digitalWrite(pinesMotor[1], LOW);  
- digitalWrite(pinesMotor[2], HIGH);  
- digitalWrite(pinesMotor[3], HIGH);  
- delay(retardo);
-
- digitalWrite(pinesMotor[0], LOW); 
- digitalWrite(pinesMotor[1], LOW);  
- digitalWrite(pinesMotor[2], LOW);  
- digitalWrite(pinesMotor[3], HIGH);  
- delay(retardo);
+  ejecutar_secuencia(pin_inicio, pin_final, secuencia);
 }
 
-// Paso hacia la derecha motor Z
-void paso_der_Z(){
- digitalWrite(pinesMotor[4], LOW);  
- digitalWrite(pinesMotor[5], LOW); 
- digitalWrite(pinesMotor[6], LOW);  
- digitalWrite(pinesMotor[7], HIGH);  
- delay(retardo); 
-   
- digitalWrite(pinesMotor[4], LOW); 
- digitalWrite(pinesMotor[5], LOW);  
- digitalWrite(pinesMotor[6], HIGH);  
- digitalWrite(pinesMotor[7], HIGH);  
- delay(retardo); 
-   
- digitalWrite(pinesMotor[4], LOW); 
- digitalWrite(pinesMotor[5], LOW);  
- digitalWrite(pinesMotor[6], HIGH);  
- digitalWrite(pinesMotor[7], LOW);  
- delay(retardo); 
-  
- digitalWrite(pinesMotor[4], LOW); 
- digitalWrite(pinesMotor[5], HIGH);  
- digitalWrite(pinesMotor[6], HIGH);  
- digitalWrite(pinesMotor[7], LOW);  
- delay(retardo);  
-
- digitalWrite(pinesMotor[4], LOW); 
- digitalWrite(pinesMotor[5], HIGH);  
- digitalWrite(pinesMotor[6], LOW);  
- digitalWrite(pinesMotor[7], LOW);  
- delay(retardo);
-
- digitalWrite(pinesMotor[4], HIGH); 
- digitalWrite(pinesMotor[5], HIGH);  
- digitalWrite(pinesMotor[6], LOW);  
- digitalWrite(pinesMotor[7], LOW);  
- delay(retardo);
-
- digitalWrite(pinesMotor[4], HIGH); 
- digitalWrite(pinesMotor[5], LOW);  
- digitalWrite(pinesMotor[6], LOW);  
- digitalWrite(pinesMotor[7], LOW);  
- delay(retardo);
-
- digitalWrite(pinesMotor[4], HIGH); 
- digitalWrite(pinesMotor[5], LOW);  
- digitalWrite(pinesMotor[6], LOW);  
- digitalWrite(pinesMotor[7], HIGH);  
- delay(retardo);
+void ejecutar_secuencia(int pin_inicio, int pin_final, byte secuencia[8]) {
+  for (int paso = 0; paso < 0; paso++) {
+    for (int pin = pin_inicio; pin <= pin_final; pin++) {
+      digitalWrite(pinesMotor[pin], bitRead(secuencia[paso], pin - pin_inicio));
+    }
+    delayMicroseconds(retardo * 1000); 
+  }
 }
 
-// Pasos a la izquierda motor Z
-void paso_izq_Z() {     
- digitalWrite(pinesMotor[4], HIGH);  
- digitalWrite(pinesMotor[5], LOW); 
- digitalWrite(pinesMotor[6], LOW);  
- digitalWrite(pinesMotor[7], HIGH);  
- delay(retardo); 
-   
- digitalWrite(pinesMotor[4], HIGH); 
- digitalWrite(pinesMotor[5], LOW);  
- digitalWrite(pinesMotor[6], LOW);  
- digitalWrite(pinesMotor[7], LOW);  
- delay(retardo); 
-   
- digitalWrite(pinesMotor[4], HIGH); 
- digitalWrite(pinesMotor[5], HIGH);  
- digitalWrite(pinesMotor[6], LOW);  
- digitalWrite(pinesMotor[7], LOW);  
- delay(retardo); 
-  
- digitalWrite(pinesMotor[4], LOW); 
- digitalWrite(pinesMotor[5], HIGH);  
- digitalWrite(pinesMotor[6], LOW);  
- digitalWrite(pinesMotor[7], LOW);  
- delay(retardo);  
-
- digitalWrite(pinesMotor[4], LOW); 
- digitalWrite(pinesMotor[5], HIGH);  
- digitalWrite(pinesMotor[6], HIGH);  
- digitalWrite(pinesMotor[7], LOW);  
- delay(retardo);
-
- digitalWrite(pinesMotor[4], LOW); 
- digitalWrite(pinesMotor[5], LOW);  
- digitalWrite(pinesMotor[6], HIGH);  
- digitalWrite(pinesMotor[7], LOW);  
- delay(retardo);
-
- digitalWrite(pinesMotor[4], LOW); 
- digitalWrite(pinesMotor[5], LOW);  
- digitalWrite(pinesMotor[6], HIGH);  
- digitalWrite(pinesMotor[7], HIGH);  
- delay(retardo);
-
- digitalWrite(pinesMotor[4], LOW); 
- digitalWrite(pinesMotor[5], LOW);  
- digitalWrite(pinesMotor[6], LOW);  
- digitalWrite(pinesMotor[7], HIGH);  
- delay(retardo);
+// Apagado de motores
+void apagado() {
+  for(int i = 0; i < 12; i++) {
+    digitalWrite(pinesMotor[i], LOW);
+  }
 }
-
-// Paso hacia la derecha motor X
-void paso_der_X(){     
- digitalWrite(pinesMotor[8], LOW);  
- digitalWrite(pinesMotor[9], LOW); 
- digitalWrite(pinesMotor[10], LOW);  
- digitalWrite(pinesMotor[11], HIGH);  
- delay(retardo); 
-   
- digitalWrite(pinesMotor[8], LOW); 
- digitalWrite(pinesMotor[9], LOW);  
- digitalWrite(pinesMotor[10], HIGH);  
- digitalWrite(pinesMotor[11], HIGH);  
- delay(retardo); 
-   
- digitalWrite(pinesMotor[8], LOW); 
- digitalWrite(pinesMotor[9], LOW);  
- digitalWrite(pinesMotor[10], HIGH);  
- digitalWrite(pinesMotor[11], LOW);  
- delay(retardo); 
-  
- digitalWrite(pinesMotor[8], LOW); 
- digitalWrite(pinesMotor[9], HIGH);  
- digitalWrite(pinesMotor[10], HIGH);  
- digitalWrite(pinesMotor[11], LOW);  
- delay(retardo);  
-
- digitalWrite(pinesMotor[8], LOW); 
- digitalWrite(pinesMotor[9], HIGH);  
- digitalWrite(pinesMotor[10], LOW);  
- digitalWrite(pinesMotor[11], LOW);  
- delay(retardo);
-
- digitalWrite(pinesMotor[8], HIGH); 
- digitalWrite(pinesMotor[9], HIGH);  
- digitalWrite(pinesMotor[10], LOW);  
- digitalWrite(pinesMotor[11], LOW);  
- delay(retardo);
-
- digitalWrite(pinesMotor[8], HIGH); 
- digitalWrite(pinesMotor[9], LOW);  
- digitalWrite(pinesMotor[10], LOW);  
- digitalWrite(pinesMotor[11], LOW);  
- delay(retardo);
-
- digitalWrite(pinesMotor[8], HIGH); 
- digitalWrite(pinesMotor[9], LOW);  
- digitalWrite(pinesMotor[10], LOW);  
- digitalWrite(pinesMotor[11], HIGH);  
- delay(retardo);
-}
-
-// Pasos a la izquierda motor X
-void paso_izq_X() {     
- digitalWrite(pinesMotor[8], HIGH);  
- digitalWrite(pinesMotor[9], LOW); 
- digitalWrite(pinesMotor[10], LOW);  
- digitalWrite(pinesMotor[11], HIGH);  
- delay(retardo); 
-   
- digitalWrite(pinesMotor[8], HIGH); 
- digitalWrite(pinesMotor[9], LOW);  
- digitalWrite(pinesMotor[10], LOW);  
- digitalWrite(pinesMotor[11], LOW);  
- delay(retardo); 
-   
- digitalWrite(pinesMotor[8], HIGH); 
- digitalWrite(pinesMotor[9], HIGH);  
- digitalWrite(pinesMotor[10], LOW);  
- digitalWrite(pinesMotor[11], LOW);  
- delay(retardo); 
-  
- digitalWrite(pinesMotor[8], LOW); 
- digitalWrite(pinesMotor[9], HIGH);  
- digitalWrite(pinesMotor[10], LOW);  
- digitalWrite(pinesMotor[11], LOW);  
- delay(retardo);  
-
- digitalWrite(pinesMotor[8], LOW); 
- digitalWrite(pinesMotor[9], HIGH);  
- digitalWrite(pinesMotor[10], HIGH);  
- digitalWrite(pinesMotor[11], LOW);  
- delay(retardo);
-
- digitalWrite(pinesMotor[8], LOW); 
- digitalWrite(pinesMotor[9], LOW);  
- digitalWrite(pinesMotor[10], HIGH);  
- digitalWrite(pinesMotor[11], LOW);  
- delay(retardo);
-
- digitalWrite(pinesMotor[8], LOW); 
- digitalWrite(pinesMotor[9], LOW);  
- digitalWrite(pinesMotor[10], HIGH);  
- digitalWrite(pinesMotor[11], HIGH);  
- delay(retardo);
-
- digitalWrite(pinesMotor[8], LOW); 
- digitalWrite(pinesMotor[9], LOW);  
- digitalWrite(pinesMotor[10], LOW);  
- digitalWrite(pinesMotor[11], HIGH);  
- delay(retardo);
-}
-
-// Apagado de los motores
-void apagado() {       
- digitalWrite(pinesMotor[11], LOW); 
- digitalWrite(pinesMotor[10], LOW);  
- digitalWrite(pinesMotor[9], LOW);  
- digitalWrite(pinesMotor[8], LOW);
- digitalWrite(pinesMotor[7], LOW); 
- digitalWrite(pinesMotor[6], LOW);  
- digitalWrite(pinesMotor[5], LOW);  
- digitalWrite(pinesMotor[4], LOW);
- digitalWrite(pinesMotor[3], LOW); 
- digitalWrite(pinesMotor[2], LOW);  
- digitalWrite(pinesMotor[1], LOW);  
- digitalWrite(pinesMotor[0], LOW);  
- }
-
-// Encendido del láser
-void laser_on(){
- digitalWrite(laserPin, HIGH);
- }
-
-// Apagado del láser
-void laser_off(){
- digitalWrite(laserPin, LOW);
- }
