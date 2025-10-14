@@ -13,13 +13,13 @@
 #define EJE_Y 1
 #define EJE_Z 2
 
-int retardo = 5; // Tiempo de retardo en milisegundos
+int retardo = 2; // Tiempo de retardo en milisegundos
 int pos_origen = 0; // Valor en grados donde se encuentra el motor
 const int laserPin = A0; // Pin laser
 
 // Pines motores
 int pinesMotor[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
-char ultimoCaracter = '0';
+char ultimoCaracter = "0";
 
 // Variables de posición global
 int pos_x = 0, pos_y = 0, pos_z = 0; 
@@ -41,7 +41,7 @@ Serial.println("ARDUINO_READY"); // Mensaje de inicialización
 
 void loop(){
   if (Serial.available() > 0){ // Revisa información disponible en el puerto serial
-   String coordenadas = Serial.readStringUntil("\n");
+   String coordenadas = Serial.readStringUntil('\n');
    ejecucionCoordenadas(coordenadas);
   }
   apagado(); // Evita calentamiento
@@ -144,11 +144,11 @@ void paso_izquierda(int pin_inicio, int pin_final) {
 }
 
 void ejecutar_secuencia(int pin_inicio, int pin_final, byte secuencia[8]) {
-  for (int paso = 0; paso < 0; paso++) {
+  for (int paso = 0; paso < 8; paso++) {
     for (int pin = pin_inicio; pin <= pin_final; pin++) {
       digitalWrite(pinesMotor[pin], bitRead(secuencia[paso], pin - pin_inicio));
+      delay(retardo); 
     }
-    delayMicroseconds(retardo * 1000); 
   }
 }
 
